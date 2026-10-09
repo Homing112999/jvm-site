@@ -7,7 +7,7 @@ import html
 import json
 import os
 
-BASE = "https://homing112999.github.io/jvm-site/"
+BASE = "https://justvibingmedia.com/"
 WA = "https://wa.me/85259932444?text=%E4%BD%A0%E5%A5%BD%EF%BC%8C%E6%88%91%E6%83%B3%E4%BA%86%E8%A7%A3%20JVM%20%E6%9C%8D%E5%8B%99"
 EMAIL = "justvibingmedia8@gmail.com"
 
