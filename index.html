@@ -143,6 +143,7 @@ section:not(.paper) .mark{background:none;color:var(--hi)}
 .svc h3{font-size:1.3rem;font-weight:900;margin-bottom:10px}
 .svc .tag{font-family:var(--f-mono);font-size:.72rem;letter-spacing:.08em;display:inline-block;background:var(--ink);color:var(--hi);padding:3px 8px;margin-bottom:16px}
 .svc p{margin:0 0 14px;color:var(--mute-on-paper)}
+.svc .more{display:inline-block;margin-top:14px;font-weight:700;text-decoration:none;border-bottom:2px solid var(--hi)}
 .svc ul{margin:0;padding-left:1.1em} .svc li{margin-bottom:4px}
 .svc.two{grid-template-columns:repeat(2,1fr);margin-top:28px}
 .grp{font-family:var(--f-mono);font-size:.78rem;letter-spacing:.12em;color:var(--mute-on-paper);margin:44px 0 0}
@@ -257,6 +258,7 @@ section:not(.paper) .mark{background:none;color:var(--hi)}
 @media (max-width:700px){.reach{grid-template-columns:1fr}}
 .handle{font-family:var(--f-mono);user-select:all;color:var(--hi)}
 footer{border-top:1px solid var(--line-on-ink);padding-block:28px;font-size:.82rem;color:var(--mute-on-ink)}
+.fnav{display:flex;flex-wrap:wrap;gap:8px 18px;margin-bottom:14px}.fnav a{text-decoration:none}.fnav a:hover{color:var(--paper)}
 footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 @media (max-width:820px){.hero-grid{grid-template-columns:1fr}}
@@ -319,7 +321,7 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px}
         <div><b>唔使淨係鬥平</b><p>客人係衝住你而嚟，唔會為咗平十蚊走去隔籬。</p></div>
         <div><b>內容唔會斷</b><p>有固定人設同內容支柱，每個月都知拍乜、講乜。</p></div>
       </div>
-      <h3 class="ip-h">你嘅 IP 方案包括</h3>
+      <h3 class="ip-h">你嘅 IP 方案包括 <a href="ip/" style="font-size:.9rem;color:var(--hi)">詳細介紹 →</a></h3>
       <div class="deliv">
         <div><span>01</span><b>人設同口號</b><p>IP 名、一句口號、你同隔籬舖唔同嘅地方。</p></div>
         <div><span>02</span><b>定位同目標客</b><p>你講俾邊個聽、佢哋最痛嘅問題係乜。</p></div>
@@ -360,18 +362,21 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px}
           <h3>按時按量出 post</h3>
           <p>每個 post 都跟住一條公式寫：痛點、3 個重點、留言 CTA。一個行業一篇，唔係複製貼上。</p>
           <ul><li>圖文、Reel、Story 都做</li><li>回覆留言，留住有興趣嘅客</li><li>每篇你批咗先出</li></ul>
+          <a class="more" href="social-media/">了解更多 →</a>
         </article>
         <article>
           <span class="tag">FACEBOOK</span>
           <h3>專頁經營</h3>
           <p>香港好多 35 歲以上嘅客仲係用 Facebook。我哋幫你打理專頁，內容同 IG 同步，唔使做兩次。</p>
           <ul><li>專頁資料、營業時間、按鈕設定</li><li>同步出 post</li><li>街坊群組同社區宣傳建議</li></ul>
+          <a class="more" href="social-media/">了解更多 →</a>
         </article>
         <article>
           <span class="tag">THREADS</span>
           <h3>用文字講你嘅故事</h3>
           <p>Threads 鍾意真實、有觀點嘅文字。我哋將老闆嘅心得寫成短帖，同新客傾偈，帶佢哋返去睇你個 IG。</p>
           <ul><li>每篇圖文同步發 Threads</li><li>老闆觀點短帖</li><li>Reel 用封面加連結帶流量</li></ul>
+          <a class="more" href="social-media/">了解更多 →</a>
         </article>
       </div>
       <p class="grp">搜尋同廣告</p>
@@ -381,18 +386,21 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px}
           <h3>人哋搜「附近」見到你</h3>
           <p>客人喺 Google 地圖搜「附近」「推介」，排前嘅通常資料齊、相多、評價多。呢啲我哋幫你一樣樣做好。</p>
           <ul><li>商家檔案設定、分類、營業時間</li><li>定期上載相同發佈更新</li><li>邀請客人留評價、代你回覆</li></ul>
+          <a class="more" href="google-maps/">了解更多 →</a>
         </article>
         <article>
           <span class="tag">AI SEO</span>
           <h3>ChatGPT 問推介，都講到你</h3>
           <p>越來越多人問 ChatGPT、Gemini、Google AI 摘要「邊間好」。AI 會揀資料清楚、多處提及嘅舖頭，我哋幫你喺網上留低呢啲資料。</p>
           <ul><li>網站結構化資料同常見問題</li><li>各平台名稱、地址、電話一致</li><li>寫 AI 易引用嘅內容</li></ul>
+          <a class="more" href="ai-seo/">了解更多 →</a>
         </article>
         <article>
           <span class="tag">META 廣告</span>
           <h3>FB 同 IG 精準落廣告</h3>
           <p>好內容加少少廣告費，可以推俾你間舖附近、啱年齡、啱興趣嘅人。我哋負責設定、出廣告圖同片、每星期睇數調整。</p>
           <ul><li>按地區、年齡、興趣揀受眾</li><li>廣告圖、片同文案全包</li><li>預算由你定，每筆你批先落</li></ul>
+          <a class="more" href="meta-ads/">了解更多 →</a>
         </article>
       </div>
     </div>
@@ -406,7 +414,7 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px}
         <article class="crew">
           <div class="vf" aria-hidden="true"><span class="rec">● REC</span><span class="tc">00:00:12:08</span></div>
           <span class="kicker">A · 真人團隊</span>
-          <h3>落區拍片</h3>
+          <h3><a href="video/" style="text-decoration:none">落區拍片</a></h3>
           <p class="sub">攝影師、導演帶齊器材上門，拍老闆、拍舖頭、拍客人真實反應。真人真舖，最有說服力，亦係建立老闆個人 IP 嘅核心。</p>
           <ul>
             <li><b>腳本分鏡</b><span>我哋寫好，你確認先拍</span></li>
@@ -419,7 +427,7 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px}
         <article class="ai">
           <div class="grid-bg" aria-hidden="true"></div>
           <span class="kicker">B · AI 製作</span>
-          <h3>AI 內容</h3>
+          <h3><a href="video/" style="text-decoration:none">AI 內容</a></h3>
           <p class="sub">唔使出鏡、唔使拍攝日，都有圖有片。適合想快啲試水溫，或者喺拍攝日之間補多啲內容。</p>
           <ul>
             <li><b>AI 圖文</b><span>post 同圖卡</span></li>
@@ -463,9 +471,9 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px}
       <h2>我哋幫過嘅<span class="mark">香港小店</span></h2>
       <p class="lede">每個行業嘅客人關心唔同嘢，所以每間店嘅內容都由佢自己嘅痛點開始寫。</p>
       <div class="served">
-        <div><h3>痛症治療店</h3><p>將專業講到街坊聽得明，令有需要嘅人記得搵你。</p></div>
-        <div><h3>咖啡小食店</h3><p>拍出人想專登去食嘅理由，唔只係行過先入。</p></div>
-        <div><h3>髮型屋</h3><p>用前後對比同髮型師個人風格，令客人指定搵返同一個人。</p></div>
+        <div><h3><a href="industries/physio/">痛症治療店</a></h3><p>將專業講到街坊聽得明，令有需要嘅人記得搵你。</p></div>
+        <div><h3><a href="industries/cafe/">咖啡小食店</a></h3><p>拍出人想專登去食嘅理由，唔只係行過先入。</p></div>
+        <div><h3><a href="industries/salon/">髮型屋</a></h3><p>用前後對比同髮型師個人風格，令客人指定搵返同一個人。</p></div>
       </div>
     </div>
   </section>
@@ -530,6 +538,7 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px}
 </main>
 
 <footer>
+  <nav class="wrap fnav" aria-label="全部服務"><a href="ip/">打造個人 IP</a><a href="social-media/">IG 代營運・FB・Threads</a><a href="video/">短片拍攝・AI 內容</a><a href="google-maps/">Google 商家檔案</a><a href="ai-seo/">AI SEO</a><a href="meta-ads/">Meta 廣告</a><a href="industries/physio/">痛症治療店宣傳</a><a href="industries/cafe/">咖啡店宣傳</a><a href="industries/salon/">髮型屋宣傳</a></nav>
   <div class="wrap"><span>© 2026 Just Vibing Media（JVM）· 香港 · WhatsApp 5993 2444 · justvibingmedia8@gmail.com</span><span>IG · Facebook · Threads · Google 地圖 · AI SEO · Meta 廣告 · 真人拍片 · AI 內容</span></div>
 </footer>
 </body>
