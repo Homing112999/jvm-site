@@ -34,4 +34,15 @@ h2{font-weight:900;font-size:clamp(1.5rem,3.6vw,2.2rem);line-height:1.25;margin:
 footer{border-top:1px solid var(--line);padding-block:32px;font-size:.85rem;color:var(--mute-ink)}
 footer nav{display:flex;flex-wrap:wrap;gap:8px 18px;margin-bottom:14px}
 footer a{text-decoration:none}footer a:hover{color:var(--paper)}
+.post>*{max-width:42rem}
+.post h2{font-size:clamp(1.25rem,3vw,1.6rem);margin:40px 0 12px}
+.post h2:first-child{margin-top:0}
+.post p,.post li{font-size:1.05rem}
+.post p{margin:0 0 14px}
+.post ul,.post ol{margin:0 0 14px;padding-left:1.4em}
+.meta{font-family:var(--fm);font-size:.75rem;color:var(--mute-ink);margin:0 0 20px}
+.list{display:grid;gap:12px}
+.list a{display:block;border:1px solid var(--paper-2);border-radius:14px;padding:20px;text-decoration:none;background:#fff8}
+.list b{display:block;font-weight:900;font-size:1.1rem}
+.list span{display:block;color:var(--mute-paper);font-size:.95rem;margin-top:6px}
 @media (max-width:760px){.cards{grid-template-columns:1fr}}

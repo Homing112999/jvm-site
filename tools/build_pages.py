@@ -7,6 +7,8 @@ import html
 import json
 import os
 
+from articles import ARTICLES
+
 BASE = "https://justvibingmedia.com/"
 WA = "https://wa.me/85259932444?text=%E4%BD%A0%E5%A5%BD%EF%BC%8C%E6%88%91%E6%83%B3%E4%BA%86%E8%A7%A3%20JVM%20%E6%9C%8D%E5%8B%99"
 EMAIL = "justvibingmedia8@gmail.com"
@@ -279,6 +281,17 @@ h2{font-weight:900;font-size:clamp(1.5rem,3.6vw,2.2rem);line-height:1.25;margin:
 footer{border-top:1px solid var(--line);padding-block:32px;font-size:.85rem;color:var(--mute-ink)}
 footer nav{display:flex;flex-wrap:wrap;gap:8px 18px;margin-bottom:14px}
 footer a{text-decoration:none}footer a:hover{color:var(--paper)}
+.post>*{max-width:42rem}
+.post h2{font-size:clamp(1.25rem,3vw,1.6rem);margin:40px 0 12px}
+.post h2:first-child{margin-top:0}
+.post p,.post li{font-size:1.05rem}
+.post p{margin:0 0 14px}
+.post ul,.post ol{margin:0 0 14px;padding-left:1.4em}
+.meta{font-family:var(--fm);font-size:.75rem;color:var(--mute-ink);margin:0 0 20px}
+.list{display:grid;gap:12px}
+.list a{display:block;border:1px solid var(--paper-2);border-radius:14px;padding:20px;text-decoration:none;background:#fff8}
+.list b{display:block;font-weight:900;font-size:1.1rem}
+.list span{display:block;color:var(--mute-paper);font-size:.95rem;margin-top:6px}
 @media (max-width:760px){.cards{grid-template-columns:1fr}}
 """
 
@@ -288,8 +301,174 @@ def esc(s):
 
 
 def footer_links(prefix):
-    items = [("", "首頁")] + NAV + INDUSTRIES
+    items = [("", "首頁")] + NAV + INDUSTRIES + [("blog/", "文章")]
     return "".join(f'<a href="{prefix}{href}">{esc(label)}</a>' for href, label in items)
+
+
+def head(title, desc, url, prefix, ld, og_type="website"):
+    return f"""<!doctype html>
+<html lang="zh-HK">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>{esc(title)}</title>
+<meta name="description" content="{esc(desc)}">
+<link rel="canonical" href="{url}">
+<meta name="robots" content="index,follow">
+<meta property="og:type" content="{og_type}">
+<meta property="og:site_name" content="Just Vibing Media">
+<meta property="og:title" content="{esc(title)}">
+<meta property="og:description" content="{esc(desc)}">
+<meta property="og:url" content="{url}">
+<meta property="og:locale" content="zh_HK">
+<meta property="og:image" content="{BASE}img/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/png" sizes="32x32" href="{prefix}img/favicon-32.png">
+<link rel="apple-touch-icon" href="{prefix}img/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+HK:wght@400;700;900&family=Archivo+Black&family=JetBrains+Mono:wght@500&display=swap">
+<link rel="stylesheet" href="{prefix}assets/site.css">
+<script type="application/ld+json">
+{json.dumps(ld, ensure_ascii=False, indent=1)}
+</script>
+</head>
+<body>
+<nav class="nav" aria-label="主選單"><div class="wrap"><a class="logo" href="{prefix}">JVM</a><a class="btn" href="{WA}" target="_blank" rel="noopener">WhatsApp 查詢</a></div></nav>
+<main>
+"""
+
+
+def tail(prefix):
+    return f"""<section class="cta"><div class="wrap">
+<h2>想知你間舖可以點做？</h2>
+<p>WhatsApp 5993 2444 或 email {EMAIL}，講聲「診斷」，我哋免費幫你睇一次。</p>
+<a class="btn" href="{WA}" target="_blank" rel="noopener">WhatsApp 我哋 →</a>
+</div></section>
+</main>
+<footer><div class="wrap"><nav aria-label="全部服務">{footer_links(prefix)}</nav>
+<span>© 2026 Just Vibing Media（JVM）· 香港 · WhatsApp 5993 2444 · {EMAIL}</span></div></footer>
+</body>
+</html>
+"""
+
+
+ORG = {"@type": "Organization", "name": "Just Vibing Media", "url": BASE, "logo": BASE + "img/logo.png"}
+
+
+def faq_ld(faq):
+    return {
+        "@type": "FAQPage",
+        "mainEntity": [
+            {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}}
+            for q, a in faq
+        ],
+    }
+
+
+def faq_html(faq):
+    return "".join(
+        f"<details{' open' if i == 0 else ''}><summary>{esc(q)}</summary><p>{esc(a)}</p></details>"
+        for i, (q, a) in enumerate(faq)
+    )
+
+
+def crumbs_ld(crumbs):
+    return {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {"@type": "ListItem", "position": i + 1, "name": n, **({"item": u} if u else {})}
+            for i, (n, u) in enumerate(crumbs)
+        ],
+    }
+
+
+def render_article(a):
+    prefix = "../../"
+    url = BASE + a["slug"]
+    crumbs = [("首頁", BASE), ("文章", BASE + "blog/"), (a["h1"], url)]
+    ld = {
+        "@context": "https://schema.org",
+        "@graph": [
+            {
+                "@type": "BlogPosting",
+                "headline": a["h1"],
+                "description": a["desc"],
+                "url": url,
+                "mainEntityOfPage": url,
+                "datePublished": a["date"],
+                "dateModified": a["date"],
+                "inLanguage": "zh-HK",
+                "image": BASE + "img/og.png",
+                "author": ORG,
+                "publisher": ORG,
+            },
+            faq_ld(a["faq"]),
+            crumbs_ld(crumbs),
+        ],
+    }
+    body = ""
+    for heading, items in a["sections"]:
+        body += f"<h2>{esc(heading)}</h2>\n"
+        for it in items:
+            if isinstance(it, str):
+                body += f"<p>{esc(it)}</p>\n"
+            else:
+                tag, lis = it
+                body += f"<{tag}>" + "".join(f"<li>{esc(x)}</li>" for x in lis) + f"</{tag}>\n"
+    names = dict(NAV + INDUSTRIES)
+    rel = "".join(f'<a href="{prefix}{r}">{esc(names[r])}</a>' for r in a["related"])
+    return head(a["title"], a["desc"], url, prefix, ld, "article") + f"""<header class="top"><div class="wrap">
+<p class="crumbs"><a href="{prefix}">首頁</a> / <a href="{prefix}blog/">文章</a></p>
+<h1>{esc(a["h1"])}</h1>
+<p class="lede">{esc(a["lede"])}</p>
+<p class="meta">Just Vibing Media · {a["date"]}</p>
+</div></header>
+<section class="paper"><div class="wrap post">
+{body}<h2>JVM 可以點幫你</h2>
+<div class="rel">{rel}<a href="{prefix}#pricing">收費：首月 HK$3,000 起</a></div>
+</div></section>
+<section><div class="wrap faq">
+<h2>常見問題</h2>
+{faq_html(a["faq"])}
+</div></section>
+""" + tail(prefix)
+
+
+def render_blog_index():
+    prefix = "../"
+    url = BASE + "blog/"
+    title = "小店宣傳文章｜IG、Google 地圖、AI SEO、個人 IP 教學｜JVM"
+    desc = "香港小店老闆實用宣傳文章：小店點宣傳、IG 冇人睇點算、Google Map 排名、點樣令 ChatGPT 推薦你間舖。"
+    ld = {
+        "@context": "https://schema.org",
+        "@graph": [
+            {
+                "@type": "Blog",
+                "name": "JVM 小店宣傳文章",
+                "url": url,
+                "inLanguage": "zh-HK",
+                "publisher": ORG,
+                "blogPost": [
+                    {"@type": "BlogPosting", "headline": a["h1"], "url": BASE + a["slug"], "datePublished": a["date"]}
+                    for a in ARTICLES
+                ],
+            },
+            crumbs_ld([("首頁", BASE), ("文章", url)]),
+        ],
+    }
+    items = "".join(
+        f'<a href="{prefix}{a["slug"]}"><b>{esc(a["h1"])}</b><span>{esc(a["desc"])}</span></a>'
+        for a in ARTICLES
+    )
+    return head(title, desc, url, prefix, ld) + f"""<header class="top"><div class="wrap">
+<p class="crumbs"><a href="{prefix}">首頁</a> / 文章</p>
+<p class="eyebrow">文章</p>
+<h1>小店宣傳實戰文章</h1>
+<p class="lede">寫俾香港小店老闆：IG、Google 地圖、AI 搜尋同個人 IP，點樣用最少預算做出效果。</p>
+</div></header>
+<section class="paper"><div class="wrap"><div class="list">{items}</div></div></section>
+""" + tail(prefix)
 
 
 def render(p):
@@ -413,12 +592,19 @@ def main():
         os.makedirs(p["slug"], exist_ok=True)
         with open(os.path.join(p["slug"], "index.html"), "w") as f:
             f.write(render(p))
-    urls = [BASE] + [BASE + p["slug"] for p in PAGES]
+    os.makedirs("blog", exist_ok=True)
+    with open("blog/index.html", "w") as f:
+        f.write(render_blog_index())
+    for a in ARTICLES:
+        os.makedirs(a["slug"], exist_ok=True)
+        with open(os.path.join(a["slug"], "index.html"), "w") as f:
+            f.write(render_article(a))
+    urls = [BASE] + [BASE + p["slug"] for p in PAGES] + [BASE + "blog/"] + [BASE + a["slug"] for a in ARTICLES]
     body = "".join(f"  <url><loc>{u}</loc><lastmod>2026-10-09</lastmod></url>\n" for u in urls)
     with open("sitemap.xml", "w") as f:
         f.write('<?xml version="1.0" encoding="UTF-8"?>\n'
                 '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + body + "</urlset>\n")
-    print(len(PAGES), "pages")
+    print(len(PAGES), "pages,", len(ARTICLES), "articles")
 
 
 if __name__ == "__main__":
