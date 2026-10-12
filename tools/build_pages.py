@@ -10,6 +10,7 @@ import os
 from articles import ARTICLES
 
 BASE = "https://justvibingmedia.com/"
+LASTMOD = "2026-10-12"
 WA = "https://wa.me/85259932444?text=%E4%BD%A0%E5%A5%BD%EF%BC%8C%E6%88%91%E6%83%B3%E4%BA%86%E8%A7%A3%20JVM%20%E6%9C%8D%E5%8B%99"
 EMAIL = "justvibingmedia8@gmail.com"
 
@@ -600,7 +601,7 @@ def main():
         with open(os.path.join(a["slug"], "index.html"), "w") as f:
             f.write(render_article(a))
     urls = [BASE] + [BASE + p["slug"] for p in PAGES] + [BASE + "blog/"] + [BASE + a["slug"] for a in ARTICLES]
-    body = "".join(f"  <url><loc>{u}</loc><lastmod>2026-10-09</lastmod></url>\n" for u in urls)
+    body = "".join(f"  <url><loc>{u}</loc><lastmod>{LASTMOD}</lastmod></url>\n" for u in urls)
     with open("sitemap.xml", "w") as f:
         f.write('<?xml version="1.0" encoding="UTF-8"?>\n'
                 '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + body + "</urlset>\n")
