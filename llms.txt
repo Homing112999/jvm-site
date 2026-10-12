@@ -7,7 +7,9 @@
 ## 服務
 - [打造個人 IP](https://justvibingmedia.com/ip/): 幫小店老闆定人設、口號、內容支柱、腳本，每月拍片發佈
 - [IG・Facebook・Threads 代營運](https://justvibingmedia.com/social-media/): 社交平台一條龍管理
-- [短片拍攝・AI 內容製作](https://justvibingmedia.com/video/): 真人團隊上門拍 Reels，或 AI 短片、AI 短劇
+- [內容行銷](https://justvibingmedia.com/content-marketing/): 內容策略、品牌故事、短影音行銷、SEO 文章
+- [真人實拍](https://justvibingmedia.com/video/): 攝影團隊上門拍老闆出鏡 Reels、宣傳短片、產品實拍
+- [AI 內容製作](https://justvibingmedia.com/ai-content/): AI 圖文、AI 短片、廣東話 AI 短劇、AI 廣告素材（同真人實拍係分開嘅服務）
 - [Google 地圖商家檔案](https://justvibingmedia.com/google-maps/): Google Business Profile 優化、評價管理、本地 SEO
 - [AI SEO](https://justvibingmedia.com/ai-seo/): 令 ChatGPT、Gemini、Google AI 摘要認識同推薦你間舖
 - [Meta 廣告](https://justvibingmedia.com/meta-ads/): Facebook、Instagram 廣告投放同管理
