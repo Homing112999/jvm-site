@@ -1,0 +1,950 @@
+<!doctype html>
+<html lang="zh-HK">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>網約車筆試溫習</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#1b1d22">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="網約車筆試">
+<style>
+[hidden]{display:none!important}
+html{-webkit-text-size-adjust:100%}
+body{margin:0}
+
+/* Layout: one narrow column like a test-centre screen; a dashboard plate on top, then the question card. */
+:root{
+  --bg:#f3f2ee; --surface:#ffffff; --ink:#1b1d22; --muted:#5f636c; --line:#dcdad3;
+  --taxi:#c8102e; --taxi-soft:#fbe7ea; --nt:#1f7a3f; --nt-soft:#e4f3e9; --amber:#b86e00; --amber-soft:#fdf1dc;
+  --plate:#1f7a3f; --plate-ink:#ffffff;
+  --f-body:"Noto Sans HK","PingFang HK","Microsoft JhengHei",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#15171b; --surface:#1e2127; --ink:#eceae4; --muted:#a3a7b0; --line:#30343c;
+  --taxi:#ff5a6e; --taxi-soft:#3a1f25; --nt:#4cc47a; --nt-soft:#173023; --amber:#f2a93b; --amber-soft:#3a2c14;
+  --plate:#1c5e33; --plate-ink:#ffffff; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#15171b; --surface:#1e2127; --ink:#eceae4; --muted:#a3a7b0; --line:#30343c;
+  --taxi:#ff5a6e; --taxi-soft:#3a1f25; --nt:#4cc47a; --nt-soft:#173023; --amber:#f2a93b; --amber-soft:#3a2c14;
+  --plate:#1c5e33; --plate-ink:#ffffff; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.6;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 48px}
+.wrap{max-width:680px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
+header{display:flex;flex-direction:column;gap:6px}
+.eyebrow{font-size:12px;letter-spacing:.12em;color:var(--muted);font-weight:500}
+h1{font-size:28px;font-weight:900;margin:0;line-height:1.25;text-wrap:balance}
+h1 .tag{display:inline-block;background:var(--taxi);color:#fff;font-size:14px;padding:2px 8px;border-radius:3px;vertical-align:middle;margin-left:8px;font-weight:700}
+.countdown{font-family:var(--f-mono);font-size:14px;color:var(--muted)}
+.plate{display:inline-flex;align-items:center;gap:8px;background:var(--plate);color:var(--plate-ink);border-radius:4px;padding:4px 10px;font-weight:700;font-size:13px;letter-spacing:.06em}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:20px}
+.rules{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.rule{display:flex;flex-direction:column;gap:2px;min-width:0}
+.rule b{font-size:15px}
+.rule span{font-size:13px;color:var(--muted)}
+.rule .num{font-family:var(--f-mono);font-size:22px;font-weight:600}
+.modes{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.mode{all:unset;cursor:pointer;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.mode:hover{border-color:var(--ink)}
+.mode:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+.mode b{font-size:16px}
+.mode span{font-size:13px;color:var(--muted)}
+.mode.primary{grid-column:1/-1;background:var(--taxi);border-color:var(--taxi);color:#fff}
+.mode.primary span{color:#ffe3e7}
+.mode[disabled]{opacity:.45;cursor:not-allowed}
+.bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;font-family:var(--f-mono);font-size:14px}
+.bar .grow{flex:1}
+.timer{padding:3px 10px;border-radius:4px;background:var(--amber-soft);color:var(--amber);font-weight:600}
+.timer.low{background:var(--taxi-soft);color:var(--taxi)}
+.progress{height:6px;background:var(--line);border-radius:3px;overflow:hidden}
+.progress i{display:block;height:100%;background:var(--ink);transition:width .2s}
+.qmeta{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:13px;color:var(--muted)}
+.chip{font-size:12px;font-weight:700;padding:2px 8px;border-radius:3px;background:var(--nt-soft);color:var(--nt)}
+.chip.b{background:var(--amber-soft);color:var(--amber)}
+.qtext{font-size:20px;font-weight:700;margin:10px 0 16px;line-height:1.45;text-wrap:balance}
+.qtext small{display:block;font-size:14px;font-weight:400;color:var(--muted);margin-top:4px}
+.opts{display:flex;flex-direction:column;gap:10px}
+.opt{all:unset;cursor:pointer;display:flex;gap:12px;align-items:flex-start;border:1.5px solid var(--line);border-radius:8px;padding:12px 14px;background:var(--surface)}
+.opt:hover{border-color:var(--muted)}
+.opt:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+.opt .k{font-family:var(--f-mono);font-weight:600;width:22px;flex:none;color:var(--muted)}
+.opt .t{min-width:0}
+.opt.sel{border-color:var(--ink)}
+.opt.right{border-color:var(--nt);background:var(--nt-soft)}
+.opt.wrong{border-color:var(--taxi);background:var(--taxi-soft)}
+.opt.locked{cursor:default}
+.explain{margin-top:14px;padding:12px 14px;border-radius:8px;background:var(--bg);font-size:14px;color:var(--ink)}
+.explain b{color:var(--nt)}
+.explain.bad b{color:var(--taxi)}
+.nav{display:flex;gap:10px;justify-content:space-between;margin-top:16px;flex-wrap:wrap}
+.btn{all:unset;cursor:pointer;padding:10px 18px;border-radius:8px;font-weight:700;font-size:15px;border:1.5px solid var(--ink);text-align:center}
+.btn.solid{background:var(--ink);color:var(--bg)}
+.btn.ghost{border-color:var(--line);color:var(--muted);font-weight:500}
+.btn:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+.btn[disabled]{opacity:.4;cursor:not-allowed}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(34px,1fr));gap:6px;margin-top:12px}
+.cell{all:unset;cursor:pointer;font-family:var(--f-mono);font-size:12px;text-align:center;padding:6px 0;border-radius:4px;border:1px solid var(--line)}
+.cell.done{background:var(--line)}
+.cell.cur{border-color:var(--ink);font-weight:600}
+.cell.r{background:var(--nt-soft);color:var(--nt);border-color:var(--nt)}
+.cell.w{background:var(--taxi-soft);color:var(--taxi);border-color:var(--taxi)}
+.result{display:flex;flex-direction:column;gap:14px}
+.verdict{font-size:30px;font-weight:900}
+.verdict.pass{color:var(--nt)} .verdict.fail{color:var(--taxi)}
+.parts{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.part{border:1px solid var(--line);border-radius:8px;padding:12px;display:flex;flex-direction:column;gap:2px}
+.part .num{font-family:var(--f-mono);font-size:24px;font-weight:600}
+.part .st{font-size:13px;font-weight:700}
+.part .st.ok{color:var(--nt)} .part .st.no{color:var(--taxi)}
+.foot{font-size:13px;color:var(--muted)}
+.foot a{color:inherit}
+@media (max-width:480px){.modes,.rules,.parts{grid-template-columns:1fr}.qtext{font-size:18px}h1{font-size:24px}}
+@media (prefers-reduced-motion:reduce){.progress i{transition:none}}
+
+/* notes */
+
+/* Layout: single reading column, sticky section tabs; facts set as label/value rows like a licence card. */
+:root{
+  --bg:#f3f2ee; --surface:#ffffff; --ink:#1b1d22; --muted:#5f636c; --line:#dcdad3;
+  --taxi:#c8102e; --taxi-soft:#fbe7ea; --nt:#1f7a3f; --nt-soft:#e4f3e9; --lantau:#1f5fa8; --lantau-soft:#e3edf9;
+  --amber:#a86400; --amber-soft:#fdf1dc;
+  --f-body:"Noto Sans HK","PingFang HK","Microsoft JhengHei",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#15171b; --surface:#1e2127; --ink:#eceae4; --muted:#a3a7b0; --line:#30343c;
+  --taxi:#ff5a6e; --taxi-soft:#3a1f25; --nt:#4cc47a; --nt-soft:#173023; --lantau:#6aa6ef; --lantau-soft:#16273d;
+  --amber:#f2a93b; --amber-soft:#3a2c14; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#15171b; --surface:#1e2127; --ink:#eceae4; --muted:#a3a7b0; --line:#30343c;
+  --taxi:#ff5a6e; --taxi-soft:#3a1f25; --nt:#4cc47a; --nt-soft:#173023; --lantau:#6aa6ef; --lantau-soft:#16273d;
+  --amber:#f2a93b; --amber-soft:#3a2c14; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.65;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 60px}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.wrap{max-width:720px;margin:0 auto;display:flex;flex-direction:column;gap:28px}
+header{display:flex;flex-direction:column;gap:6px}
+.eyebrow{font-size:12px;letter-spacing:.12em;color:var(--muted);font-weight:500}
+h1{font-size:30px;font-weight:900;margin:0;line-height:1.25;text-wrap:balance}
+h2{font-size:22px;font-weight:900;margin:0;text-wrap:balance;display:flex;gap:10px;align-items:baseline}
+h2 .p{font-size:12px;font-weight:700;padding:2px 8px;border-radius:3px;background:var(--nt-soft);color:var(--nt);letter-spacing:.04em}
+h2 .p.b{background:var(--amber-soft);color:var(--amber)}
+h3{font-size:17px;font-weight:700;margin:0}
+p{margin:0;max-width:65ch}
+.lead{color:var(--muted);font-size:15px}
+nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:8px;display:flex;gap:6px;overflow-x:auto;border-bottom:1px solid var(--line)}
+nav a{flex:none;font-size:14px;font-weight:500;color:var(--ink);text-decoration:none;padding:6px 12px;border-radius:20px;border:1px solid var(--line);background:var(--surface)}
+nav a:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+section{display:flex;flex-direction:column;gap:14px;scroll-margin-top:64px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.facts{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:0;border-top:1px solid var(--line)}
+.facts>div{padding:9px 0;border-bottom:1px solid var(--line)}
+.facts .v{font-family:var(--f-mono);font-weight:600;text-align:right;padding-left:12px;white-space:nowrap}
+.facts .v.t{font-family:var(--f-body);white-space:normal;max-width:16em}
+.big{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.big div{border:1px solid var(--line);border-radius:8px;padding:12px;background:var(--surface);display:flex;flex-direction:column;gap:2px;min-width:0}
+.big b{font-family:var(--f-mono);font-size:24px;font-weight:600;line-height:1.2}
+.big span{font-size:13px;color:var(--muted)}
+.tw{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:15px}
+th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:13px;color:var(--muted);font-weight:500;white-space:nowrap}
+td.n{font-family:var(--f-mono);font-weight:600;white-space:nowrap}
+.colors{display:flex;gap:10px;flex-wrap:wrap}
+.sw{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:6px;font-weight:700;font-size:15px}
+.sw.r{background:var(--taxi-soft);color:var(--taxi)} .sw.g{background:var(--nt-soft);color:var(--nt)} .sw.bl{background:var(--lantau-soft);color:var(--lantau)}
+.sw i{width:14px;height:14px;border-radius:3px;background:currentColor;display:block}
+.tip{border-left:3px solid var(--amber);background:var(--amber-soft);padding:10px 14px;border-radius:0 8px 8px 0;font-size:15px}
+.tip b{color:var(--amber)}
+ul{margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:4px}
+.pts{display:flex;flex-direction:column;gap:8px}
+.pt{display:grid;grid-template-columns:44px 1fr;gap:10px;align-items:start}
+.pt .s{font-family:var(--f-mono);font-weight:600;font-size:15px;text-align:center;border-radius:4px;padding:2px 0}
+.pt .s.x10{background:var(--taxi-soft);color:var(--taxi)} .pt .s.x5{background:var(--amber-soft);color:var(--amber)} .pt .s.x3{background:var(--nt-soft);color:var(--nt)}
+.tools{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.tools input{flex:1;min-width:0;font:inherit;padding:9px 12px;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--ink)}
+.tools input:focus-visible{outline:3px solid var(--amber);outline-offset:1px}
+.seg{display:flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.seg button{all:unset;cursor:pointer;padding:8px 12px;font-size:14px;background:var(--surface)}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.seg button:focus-visible{outline:3px solid var(--amber);outline-offset:-3px}
+.group{display:flex;flex-direction:column;gap:6px}
+.group h3{font-size:15px;display:flex;gap:8px;align-items:baseline}
+.group h3 small{font-weight:400;color:var(--muted);font-family:var(--f-mono);font-size:12px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.pchip{font-size:14px;padding:4px 10px;border-radius:6px;background:var(--bg);border:1px solid var(--line)}
+.pchip em{font-style:normal;color:var(--muted);font-size:13px;margin-left:6px}
+.pchip.st em{color:var(--taxi);font-weight:500}
+.count{font-size:13px;color:var(--muted)}
+.foot{font-size:13px;color:var(--muted)}
+.foot a{color:inherit}
+@media (max-width:520px){.big{grid-template-columns:1fr 1fr}h1{font-size:26px}}
+
+.switch{max-width:720px;margin:0 auto 18px;display:grid;grid-template-columns:1fr 1fr;border:1.5px solid var(--ink);border-radius:10px;overflow:hidden}
+.switch button{all:unset;cursor:pointer;text-align:center;padding:11px 0;font-weight:700;font-size:16px;background:var(--surface);color:var(--ink)}
+.switch button[aria-selected="true"]{background:var(--ink);color:var(--bg)}
+.switch button:focus-visible{outline:3px solid var(--amber);outline-offset:-3px}
+#quizView{max-width:680px}
+.signs{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px}.signs figure{margin:0;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;padding:10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);min-width:0}.signs svg{width:78px;height:auto;max-width:100%}.signs figcaption{font-size:13px;color:var(--muted);line-height:1.45}.signs figcaption b{display:block;color:var(--ink);font-size:14px}
+.sg{font-size:15px;color:var(--muted);margin-top:6px}.signs figure svg{width:84px}
+.qsign{display:flex;justify-content:center;margin:-4px 0 16px}.qsign svg{width:140px;height:auto}
+</style>
+</head>
+<body>
+<div class="switch" role="tablist" aria-label="切換">
+  <button id="tab-notes" role="tab" aria-selected="true">溫習筆記</button>
+  <button id="tab-quiz" role="tab" aria-selected="false">模擬試</button>
+</div>
+
+
+<div class="wrap" id="notesView">
+<header>
+  <span class="eyebrow">的士及網約車綜合筆試 · 10月21日</span>
+  <h1>網約車筆試筆記</h1>
+  <p class="lead">按運輸署《的士及網約車營運小冊子》（2026年8月3日起生效）及《道路使用者守則》（2020年6月版）整理。先睇筆記，再用練習 app 做模擬試。</p>
+</header>
+
+<nav aria-label="章節">
+  <a href="#format">考試格式</a><a href="#ops">的士 vs 網約車</a><a href="#points">記分制</a><a href="#safety">安全與行李</a><a href="#places">地方題</a><a href="#routes">路線題</a><a href="#code">道路守則</a><a href="#signs-all">交通標誌</a>
+</nav>
+
+<section id="format">
+  <h2>考試格式</h2>
+  <div class="big">
+    <div><b>45 分鐘</b><span>全卷時限</span></div>
+    <div><b>65 題</b><span>多項選擇題</span></div>
+    <div><b>≤5 錯</b><span>每部分各自計</span></div>
+  </div>
+  <div class="card">
+    <div class="tw"><table>
+      <tr><th>部分</th><th>內容</th><th>題數</th><th>合格</th></tr>
+      <tr><td>甲部</td><td>載客服務知識（四選一）</td><td class="n">20</td><td rowspan="3">啱 25 題或以上</td></tr>
+      <tr><td></td><td>地方試題（四選一）</td><td class="n">9</td></tr>
+      <tr><td></td><td>路線試題（三選一）</td><td class="n">1</td></tr>
+      <tr><td>乙部</td><td>道路使用者守則（三選一）</td><td class="n">35</td><td>啱 30 題或以上</td></tr>
+    </table></div>
+    <p class="tip"><b>注意：</b>兩部分分開計。甲部錯 2 題、乙部錯 6 題都係唔及格。</p>
+  </div>
+</section>
+
+<section id="ops">
+  <h2><span class="p">甲部</span>的士 vs 網約車</h2>
+  <div class="card">
+    <div class="tw"><table>
+      <tr><th></th><th>的士</th><th>網約車</th></tr>
+      <tr><td>最多乘客</td><td class="n">6 人</td><td class="n">7 人（私家車）</td></tr>
+      <tr><td>接客方式</td><td>街上截車、的士站，或網約渠道</td><td><b>只可接持牌平台訂單</b>，不可街上截車</td></tr>
+      <tr><td>上落客</td><td>的士站，或乘客要求／示意時</td><td>非限制區、一般停車灣；不可在封閉道路、限制區、禁區</td></tr>
+      <tr><td>車費</td><td>按計程錶（第374D章附表5）；可「包車」</td><td>平台自訂，<b>行程開始前</b>要讓乘客知悉</td></tr>
+      <tr><td>付款</td><td>現金 + 自2026年4月1日起最少 <b>2種</b>電子付款（1種二維碼 + 1種非二維碼）</td><td>由平台提供，一般為電子付款</td></tr>
+      <tr><td>收據</td><td>須裝收據打印機；壞咗用預印表格手寫</td><td>行程完成後由<b>平台</b>傳送收據</td></tr>
+      <tr><td>司機身分</td><td>車內展示有效<b>的士司機證</b></td><td>按平台要求做人臉辨識；平台向乘客提供司機相片及姓名</td></tr>
+      <tr><td>車輛標識</td><td>車頂「TAXI」燈（夜間可出租時亮）；車身兩旁「的士/TAXI」；車頭車尾<b>綠底白字</b>座位數字牌</td><td>展示運輸署發出的<b>網約車車輛證明書</b>；私人用途時展示亦不違法</td></tr>
+      <tr><td>行李</td><td>見「安全與行李」</td><td>由平台決定，附加費要事先通知</td></tr>
+      <tr><td>動物</td><td>司機酌情決定；乘客負責賠償損壞</td><td>由平台決定，行程前與乘客協定</td></tr>
+    </table></div>
+  </div>
+  <div class="card">
+    <h3>車身顏色（車隊的士識別牌底色同樣）</h3>
+    <div class="colors"><span class="sw r"><i></i>市區・紅色</span><span class="sw g"><i></i>新界・綠色</span><span class="sw bl"><i></i>大嶼山・藍色</span></div>
+  </div>
+  <div class="card">
+    <h3>網約車三方持牌</h3>
+    <ul>
+      <li>平台要有<b>網約車服務牌照</b>，車要有<b>網約車車輛許可證</b>，司機要有<b>網約車車輛駕駛許可證</b></li>
+      <li><b>人車綁定</b>：車要以個人名義登記，只可由登記車主駕駛提供服務</li>
+      <li>私家車或輕型貨車正式駕駛執照被取消 → 網約車駕駛許可證<b>即予取消</b></li>
+      <li>被取消駕駛的士資格期間 → 網約車駕駛許可證<b>暫時吊銷</b>，亦不可申請</li>
+      <li>根據第375章被取消駕駛資格 → 許可證在停牌期間<b>無效</b></li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3>車隊的士</h3>
+    <ul>
+      <li>車隊牌照不取代的士牌照，亦不是必須；持牌人要是香港註冊公司</li>
+      <li>擋風玻璃展示車隊的士證明書，車身前後展示識別牌</li>
+      <li>預定行程可自訂車費；<b>街頭截乘仍按法定收費表</b></li>
+      <li>車隊的士停車處：機場、部分口岸、高鐵西九龍站、部分機鐵站、啟德郵輪碼頭、迪士尼等</li>
+    </ul>
+  </div>
+</section>
+
+<section id="points">
+  <h2><span class="p">甲部</span>的士司機違例記分制</h2>
+  <div class="card">
+    <div class="pts">
+      <div class="pt"><span class="s x10">10</span><span>濫收車費 · 拒載 · 拒絕駛往指示地點 · 毀損或更改計程錶</span></div>
+      <div class="pt"><span class="s x5">5</span><span>兜客 · 兜路 · 釣泥鯭（未經同意讓其他人上車）· 欺騙或拒絕知會收費及路線</span></div>
+      <div class="pt"><span class="s x3">3</span><span>拒載要求數目的乘客 · 拒發收據 · 計程錶不設於記錄位置</span></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="facts">
+      <div>兩年內 8–14 分</div><div class="v t">收「記分提示」</div>
+      <div>兩年內 10 分或以上</div><div class="v t">3 個月內自費上服務改進課程</div>
+      <div>無合理辯解不上課</div><div class="v">$5,000 + 監禁1個月</div>
+      <div>上完課考試合格（總分 &gt;3）</div><div class="v">扣 3 分</div>
+      <div>上完課考試合格（總分 ≤3）</div><div class="v t">扣晒所有分</div>
+      <div>兩年內 15 分或以上</div><div class="v t">可被取消駕駛的士資格</div>
+      <div>首次停牌</div><div class="v">3 個月</div>
+      <div>其後每次停牌</div><div class="v">6 個月</div>
+      <div>10 分罪行初犯最高</div><div class="v">$10,000 + 6個月</div>
+      <div>10 分罪行重犯最高</div><div class="v">$25,000 + 12個月</div>
+    </div>
+    <p class="tip"><b>易錯：</b>「兩年」由<b>干犯罪行日期</b>計，唔係記分日期。以下情況上完課都唔減分：考試唔合格、0 分、已有 15 分或以上、兩年內已減過分。</p>
+  </div>
+</section>
+
+<section id="safety">
+  <h2><span class="p">甲部</span>安全、兒童與行李</h2>
+  <div class="card">
+    <div class="facts">
+      <div>輪胎坑紋深度（四分三闊度）</div><div class="v">≥ 1 毫米</div>
+      <div>司機前方流動電訊裝置</div><div class="v">最多 2 部</div>
+      <div>每部屏幕對角長度</div><div class="v">≤ 19 厘米</div>
+      <div>違反流動裝置規定</div><div class="v">最高 $2,000</div>
+      <div>私家車（網約車）兒童束縛設備</div><div class="v t">8 歲以下（除非身高達 1.35 米）</div>
+      <div>違反兒童束縛設備規定</div><div class="v">最高 $2,000</div>
+      <div>的士車廂免費行李</div><div class="v t">每件長+闊+高 ≤ 140 厘米</div>
+      <div>的士車尾行李箱</div><div class="v t">每件可收附加費（不論大小）</div>
+      <div>傷殘乘客輪椅、拐杖</div><div class="v t">一律免費</div>
+    </div>
+  </div>
+  <div class="card">
+    <ul>
+      <li>的士<b>唔適用</b>兒童束縛設備規定：成年人先扣好自己安全帶，再抱緊未能坐穩的兒童坐膝上</li>
+      <li>的士不可運載<b>危險或厭惡性質</b>、或<b>未經牢固包裝</b>的貨物</li>
+      <li>開車門前：車要完全停定並拉緊手掣；關門前察看車廂</li>
+      <li>不可在行人過路處、轉彎位、路口上落客</li>
+      <li>壞車：先顧安全，即開危險警告燈；未肯定安全前留在車內扣好安全帶</li>
+      <li>疲倦：開窗、調低冷氣、找泊車位休息，<b>不可</b>在快速公路停車</li>
+      <li>絕不可因國籍、種族、性別、年齡、殘疾而不禮貌或拒載</li>
+      <li>的士須裝行車記錄系統（車廂攝錄、行車記錄儀、衞星導航），並貼告示</li>
+    </ul>
+  </div>
+</section>
+
+<section id="places">
+  <h2><span class="p">甲部</span>地方題</h2>
+  <p class="lead">考 9 題，答案係地方所在嘅區域或街道。按地區睇最易記，因為好多答案重複（例如尖沙咀、黃竹坑、九龍城）。紅色答案係街道名，最易錯。</p>
+  <div class="tools">
+    <input id="q" type="search" placeholder="搜尋地方或地區，例如：醫院、黃竹坑" aria-label="搜尋地方">
+    <div class="seg" role="group" aria-label="排列方式">
+      <button id="by-area" aria-pressed="true">按地區</button><button id="by-cat" aria-pressed="false">按類別</button>
+    </div>
+  </div>
+  <span class="count" id="count"></span>
+  <div class="card" id="plist"></div>
+</section>
+
+<section id="routes">
+  <h2><span class="p">甲部</span>路線題</h2>
+  <p class="lead">考 1 題，揀正常交通下最直接可行嘅路線（唔使理隧道費）。過海題記住：港島西／半山用<b>西隧</b>，灣仔、銅鑼灣、北角、跑馬地用<b>紅隧</b>。</p>
+  <div class="card"><div class="tw"><table id="rtable"><tr><th>起點</th><th>目的地</th><th>最直接路線</th></tr></table></div></div>
+</section>
+
+<section id="code">
+  <h2><span class="p b">乙部</span>道路使用者守則數字</h2>
+  <div class="card">
+    <div class="facts">
+      <div>一般車速限制（無標誌時）</div><div class="v">50 km/h</div>
+      <div>跟車距離（一般）</div><div class="v">2 秒</div>
+      <div>跟車距離（濕滑、霧）</div><div class="v">4 秒或以上</div>
+      <div>雨天煞車距離</div><div class="v">最少 2 倍</div>
+      <div>隧道內最低車速（正常交通）</div><div class="v">25 km/h</div>
+      <div>警告三角（≤50 km/h 道路）</div><div class="v t">障礙物後約 50 米，同一邊路</div>
+      <div>快速公路／&gt;50 km/h 道路</div><div class="v t">只開危險警告燈，不放三角</div>
+      <div>有人受傷、未能在現場提供資料</div><div class="v t">24 小時內親身報警</div>
+      <div>呼氣酒精限度</div><div class="v">22 微克/100毫升</div>
+      <div>血液酒精限度</div><div class="v">50 毫克/100毫升</div>
+      <div>尿液酒精限度</div><div class="v">67 毫克/100毫升</div>
+      <div>停車時引擎空轉</div><div class="v t">任何 60 分鐘內累計 ≤ 3 分鐘</div>
+      <div>電單車後座乘客最低年齡</div><div class="v">8 歲</div>
+      <div>前座乘客與儀錶板距離</div><div class="v">≥ 0.25 米</div>
+      <div>視力要求</div><div class="v t">日光下看清 23 米外車牌</div>
+      <div>駕駛執照最低年齡</div><div class="v">18 歲</div>
+            <div>快速公路里程標記間距</div><div class="v">100 米</div>
+    </div>
+  </div>
+  <div class="card">
+    <h3>「不准停車」標誌杆顏色</h3>
+    <div class="facts">
+      <div>紅色</div><div class="v">7am – 午夜</div>
+      <div>黃色</div><div class="v">7am – 7pm</div>
+      <div>綠色</div><div class="v t">8–10am 及 5–7pm</div>
+      <div>灰色</div><div class="v t">其他時段</div>
+      <div>雙黃線</div><div class="v t">任何時間不准停車</div>
+      <div>單黃實線 + 標誌</div><div class="v t">標誌所示時段</div>
+    </div>
+    <p class="tip"><b>記法：</b>紅色最長（到午夜），黃色係日間（7至7），綠色係返工放工兩段。</p>
+  </div>
+  <div class="card">
+    <h3>常考規則</h3>
+    <ul>
+      <li><b>駛過水浸路面後</b>：立即試煞車掣（運輸署示範題）</li>
+      <li>綠燈：要肯定有空間駛離路口先前進；紅燈或<b>紅黃燈同亮</b>都不可前進</li>
+      <li>黃色方格：出口不暢通不可駛入（右轉箭咀線等對面車屬例外）</li>
+      <li>交通燈失靈：當無燈號路口，減速或停車，極度小心</li>
+      <li>迴旋處：入口必須<b>左轉</b>；讓路給右方已在迴旋處的車；錯過出口就再兜一圈</li>
+      <li>迴旋處直行：駛近時不打燈，過咗前一個出口先打左燈</li>
+      <li>只可在<b>右方</b>超車；快速公路左方超車屬違法；被超越時不要加速</li>
+      <li>近你一方雙白線係實線：不可越過；虛線：安全時可越過</li>
+      <li>斑馬線之字線：不可停車、超車；不要揮手叫行人過路</li>
+      <li>快速公路：靠最左線；不可掉頭、倒車；錯過出口駛往下一個出口</li>
+      <li>暫准駕駛執照：三線或以上快速公路不可用最右線</li>
+      <li>學車、小巴、125cc 以下車輛上快速公路要署長書面准許</li>
+      <li>隧道：不可用遠光燈、響號、越雙白線、掉頭、倒車；壞車留在車內等候（有煙或火除外）</li>
+      <li>晚上有街燈都要開車頭燈；遇對頭車、跟車時轉近光燈</li>
+      <li>被遠光燈眩目：望向左邊路緣，減速或停車</li>
+      <li>霧燈：只在有霧及車輛裝有霧燈時用</li>
+      <li>響號只用作警告危險；「寧靜區」（醫院附近）不可響號</li>
+      <li>閃燈只用嚟讓人知道你存在</li>
+      <li>見緊急車輛閃燈或響警號：立即讓路，否則違法</li>
+      <li>車輛移動時不可手持電話（包括夾喺頭同膊頭之間）</li>
+      <li>私家車所有乘客都要扣安全帶；兩人不可共用一條；前座 3 歲以下用兒童束縛設備</li>
+      <li>計算載客：3 歲以下不計；3 名 3 歲或以上而身高不足 1.3 米當 2 人</li>
+      <li>不可由支路倒車入主要道路</li>
+      <li>巴士線：運作時間以外所有車可用；路面標記位置可越過巴士線轉左</li>
+      <li>有死傷：未經警方准許不可移動車輛（救人或滅火除外）</li>
+      <li>街燈相距不超過 200 米的道路：只可在劃定泊車位泊車</li>
+    </ul>
+  </div>
+    <div class="card">
+    <h3>交通標誌形狀同顏色（示意圖）</h3>
+    <div class="signs">
+      <figure><svg viewBox="0 0 100 100" role="img" aria-label="紅邊圓形"><circle cx="50" cy="50" r="44" fill="#fff" stroke="#c8102e" stroke-width="11"/><text x="50" y="62" text-anchor="middle" font-size="34" font-weight="700" fill="#111">50</text></svg><figcaption><b>紅邊圓形</b>禁制：唔准做（例如速度限制）</figcaption></figure>
+      <figure><svg viewBox="0 0 100 100" role="img" aria-label="藍色圓形"><circle cx="50" cy="50" r="46" fill="#1f5fa8"/><path d="M50 22 L68 46 H56 V78 H44 V46 H32 Z" fill="#fff"/></svg><figcaption><b>藍色圓形</b>強制：一定要照做（例如只准向前）</figcaption></figure>
+      <figure><svg viewBox="0 0 100 100" role="img" aria-label="紅邊三角形"><path d="M50 8 L94 88 H6 Z" fill="#fff" stroke="#c8102e" stroke-width="9" stroke-linejoin="round"/><rect x="45" y="36" width="10" height="28" rx="2" fill="#111"/><circle cx="50" cy="74" r="5.5" fill="#111"/></svg><figcaption><b>三角形（尖向上）</b>警告：前面有危險</figcaption></figure>
+      <figure><svg viewBox="0 0 100 100" role="img" aria-label="八角形停車"><path d="M31 4 H69 L96 31 V69 L69 96 H31 L4 69 V31 Z" fill="#c8102e"/><path d="M33 10 H67 L90 33 V67 L67 90 H33 L10 67 V33 Z" fill="none" stroke="#fff" stroke-width="3"/><text x="50" y="64" text-anchor="middle" font-size="38" font-weight="900" fill="#fff">停</text></svg><figcaption><b>八角形</b>「停車」標誌：一定要喺停車線前停定</figcaption></figure>
+      <figure><svg viewBox="0 0 100 100" role="img" aria-label="倒三角形讓路"><path d="M6 12 H94 L50 92 Z" fill="#fff" stroke="#c8102e" stroke-width="9" stroke-linejoin="round"/><text x="50" y="50" text-anchor="middle" font-size="26" font-weight="900" fill="#111">讓</text></svg><figcaption><b>倒轉三角形</b>「讓路」標誌：讓大路車先行</figcaption></figure>
+      <figure><svg viewBox="0 0 100 100" role="img" aria-label="長方形提示"><rect x="6" y="22" width="88" height="56" rx="6" fill="#fff" stroke="#888" stroke-width="2"/><text x="50" y="57" text-anchor="middle" font-size="18" font-weight="700" fill="#111">資料</text></svg><figcaption><b>長方形</b>提示：路線、設施資料</figcaption></figure>
+    </div>
+    <h3>方向標誌底色</h3>
+    <div class="signs">
+      <figure><svg viewBox="0 0 100 60" role="img" aria-label="藍底"><rect x="2" y="2" width="96" height="56" rx="5" fill="#1f5fa8"/><text x="50" y="38" text-anchor="middle" font-size="16" font-weight="700" fill="#fff">九龍 →</text></svg><figcaption><b>藍底</b>一般道路</figcaption></figure>
+      <figure><svg viewBox="0 0 100 60" role="img" aria-label="綠底"><rect x="2" y="2" width="96" height="56" rx="5" fill="#1f7a3f"/><text x="50" y="38" text-anchor="middle" font-size="16" font-weight="700" fill="#fff">機場 ↑</text></svg><figcaption><b>綠底</b>快速公路</figcaption></figure>
+      <figure><svg viewBox="0 0 100 60" role="img" aria-label="白底"><rect x="2" y="2" width="96" height="56" rx="5" fill="#fff" stroke="#888" stroke-width="2"/><text x="50" y="38" text-anchor="middle" font-size="16" font-weight="700" fill="#111">醫院 ←</text></svg><figcaption><b>白底</b>區內目的地</figcaption></figure>
+      <figure><svg viewBox="0 0 100 60" role="img" aria-label="黃底"><rect x="2" y="2" width="96" height="56" rx="5" fill="#f4c20d"/><text x="50" y="38" text-anchor="middle" font-size="16" font-weight="700" fill="#111">改道 →</text></svg><figcaption><b>黃底</b>臨時路線、改道</figcaption></figure>
+    </div>
+    <p class="foot">示意圖只表示形狀同顏色規律，唔係標誌原圖。</p>
+  </div>
+  <div class="card" id="signs-all">
+    <h3>常見交通標誌圖鑑（共 51 個）</h3>
+    <h3 class="sg">禁制標誌（紅邊圓形）</h3>
+    <div class="signs"><figure><svg viewBox="0 0 100 100" role="img"><circle cx="50" cy="50" r="43" fill="#1f5fa8" stroke="#c8102e" stroke-width="11"/><path d="M22 22 L78 78 M78 22 L22 78" stroke="#c8102e" stroke-width="9"/></svg><figcaption><b>不准停車</b></figcaption></figure><figure><svg viewBox="0 0 100 100" role="img"><circle cx="50" cy="50" r="43" fill="#1f5fa8" stroke="#c8102e" stroke-width="11"/><line x1="22" y1="22" x2="78" y2="78" stroke="#c8102e" stroke-width="9"/></svg><figcaption><b>不准泊車</b></figcaption></figure><figure><svg viewBox="0 0 100 100" role="img"><circle cx="50" cy="50" r="47" fill="#c8102e"/><rect x="18" y="41" width="64" height="18" fill="#fff"/></svg><figcaption><b>所有車輛不准駛入</b></figcaption></figure><figure><svg viewBox="0 0 100 100" role="img"><circle cx="50" cy="50" r="43" fill="#fff" stroke="#c8102e" stroke-width="11"/></svg><figcaption><b>禁止一切車輛駛入（按輔助字牌）</b></figcaption></figure><figure><svg viewBox="0 0 100 100" role="img"><circle cx="50" cy="50" r="43" fill="#fff" stroke="#c8102e" stroke-width="11"/><text x="50" y="63" text-anchor="middle" font-size="36" font-weight="800" fill="#111">50</text></svg><figcaption><b>速度限制（每小時 50 公里）</b></figcaption></figure><figure><svg viewBox="0 0 100 100" role="img"><circle cx="50" cy="50" r="43" fill="#fff" stroke="#c8102e" stroke-width="11"/><g transform="translate(22 22) scale(0.56)"><path d="M18 60 L26 42 H74 L82 60 V72 H18 Z" fill="#111"/><rect x="30" y="46" width="40" height="10" fill="#fff"/><circle cx="32" cy="74" r="7" fill="#111"/><circle cx="68" cy="74" r="7" fill="#111"/></g></svg><figcaption><b>禁止汽車駛入</b></figcaption></figure><figure><svg viewBox="0 0 100 100" role="img"><circle cx="50" cy="50" r="43" fill="#fff" stroke="#c8102e" stroke-width="11"/><g transform="translate(22 22) scale(0.56)"><rect x="14" y="34" width="46" height="34" fill="#111"/><path d="M60 46 H76 L86 58 V68 H60 Z" fill="#111"/><circle cx="28" cy="72" r="7" fill="#111"/><circle cx="74" cy="72" r="7" fill="#111"/></g></svg><figcaption><b>禁止貨車駛入</b></figcaption></figure><figure><svg viewBox="0 0 100 100" role="img"><circle cx="50" cy="50" r="43" fill="#fff" stroke="#c8102e" stroke-width="11"/><g transform="translate(22 22) scale(0.56)"><circle cx="28" cy="66" r="11" fill="none" stroke="#111" stroke-width="5"/><circle cx="74" cy="66" r="11" fill="none" stroke="#111" stroke-width="5"/><path d="M28 66 L46 48 H62 L74 66 M54 48 L50 36 H40" fill="none" stroke="#111" stroke-width="6" stroke-linecap="round"/></g></svg><figcaption><b>禁止電單車駛入</b></figcaption></figure><figure><svg viewBox="0 0 100 100" role="img"><circle cx="50" cy="50" r="43" fill="#fff" stroke="#c8102e" stroke-width="11"/><g transform="translate(20 20) scale(0.6)"><path d="M62 86 V50 Q62 40 52 40 H38 V28 L16 46 L38 64 V52 H50 V86 Z" fill="#111"/></g><line x1="24" y1="24" x2="76" y2="76" stroke="#c8102e" stroke-width="9"/></svg><figcaption><b>不准左轉</b></figcaption></figure><figure><svg viewBox="0 0 100 100" role="img"><circle cx="50" cy="50" r="43" fill="#fff" stroke="#c8102e" stroke-width="11"/><g transform="translate(20 20) scale(0.6)"><path d="M38 86 V50 Q38 40 48 40 H62 V28 L84 46 L62 64 V52 H50 V86 Z" fill="#111"/></g><line x1="24" y1="24" x2="76" y2="76" stroke="#c8102e" stroke-width="9"/></svg><figcaption><b>不准右轉</b></figcaption></figure><figure><svg viewBox="0 0 100 100" role="img"><circle cx="50" cy="50" r="43" fill="#fff" stroke="#c8102e" stroke-width="11"/><g transform="translate(20 20) scale(0.6)"><path d="M64 86 V40 Q64 22 48 22 Q32 22 32 40 V56 H20 L38 78 L56 56 H44 V40 Q44 34 48 34 Q52 34 52 40 V86 Z" fill="#111"/></g><line x1="24" y1="24" x2="76" y2="76" stroke="#c8102e" stroke-width="9"/></svg><figcaption><b>不准掉頭</b></figcaption></figure><figure><svg viewBox="0 0 100 100" role="img"><circle cx="50" cy="50" r="43" fill="#fff" stroke="#c8102e" stroke-width="11"/><g transform="translate(18 26) scale(0.64)"><g transform="translate(-14 4) scale(0.62)"><path d="M18 60 L26 42 H74 L82 60 V72 H18 Z" fill="#111"/><rect x="30" y="46" width="40" height="10" fill="#fff"/><circle cx="32" cy="74" r="7" fill="#111"/><circle cx="68" cy="74" r="7" fill="#111"/></g><g transform="translate(46 4) scale(0.62)"><path d="M18 60 L26 42 H74 L82 60 V72 H18 Z" fill="#c8102e"/><rect x="30" y="46" width="40" height="10" fill="#fff"/><circle cx="32" cy="74" r="7" fill="#c8102e"/><circle cx="68" cy="74" r="7" fill="#c8102e"/></g></g></svg><figcaption><b>不准超車</b></figcaption></figure><figure><svg viewBox="0 0 100 100" role="img"><circle cx="50" cy="50" r="43" fill="#fff" stroke="#c8102e" stroke-width="11"/><g transform="translate(22 22) scale(0.56)"><path d="M22 42 H38 L66 24 V76 L38 58 H22 Z" fill="#111"/></g><line x1="24" y1="24" x2="76" y2="76" stroke="#c8102e" stroke-width="9"/></svg><figcaption><b>禁止響號</b></figcaption></figure><figure><svg viewBox="0 0 100 100" role="img"><circle cx="50" cy="50" r="43" fill="#fff" stroke="#c8102e" stroke-width="11"/><g transform="translate(22 22) scale(0.56)"><text x="50" y="62" text-anchor="middle" font-size="30" font-weight="800" fill="#111">4.5m</text><path d="M40 10 H60 L50 24 Z M40 90 H60 L50 76 Z" fill="#111"/></g></svg><figcaption><b>禁止超過所示高度的車輛駛入</b></figcaption></figure><figure><svg viewBox="0 0 100 100" role="img"><circle cx="50" cy="50" r="43" fill="#fff" stroke="#c8102e" stroke-width="11"/><g transform="translate(24 22) scale(0.52)"><circle cx="52" cy="18" r="8" fill="#111"/><path d="M52 28 L46 56 L34 86 M48 50 L64 86 M50 34 L30 48 M52 34 L70 46" stroke="#111" stroke-width="8" stroke-linecap="round" fill="none"/></g><line x1="24" y1="24" x2="76" y2="76" stroke="#c8102e" stroke-width="9"/></svg><figcaption><b>行人止步</b></figcaption></figure></div>
+    <h3 class="sg">強制標誌（藍色圓形）</h3>
+    <div class="signs"><figure><svg viewBox="0 0 100 100" role="img"><circle cx="50" cy="50" r="47" fill="#1f5fa8"/><path d="M50 16 L72 44 H58 V84 H42 V44 H28 Z" fill="#fff"/></svg><figcaption><b>只准向前駛</b></figcaption></figure><figure><svg viewBox="0 0 100 100" role="img"><circle cx="50" cy="50" r="47" fill="#1f5fa8"/><g transform="translate(10 6) scale(0.85)"><path d="M62 86 V50 Q62 40 52 40 H38 V28 L16 46 L38 64 V52 H50 V86 Z" fill="#fff"/></g></svg><figcaption><b>只准左轉</b></figcaption></figure><figure><svg viewBox="0 0 100 100" role="img"><circle cx="50" cy="50" r="47" fill="#1f5fa8"/><g transform="translate(5 6) scale(0.85)"><path d="M38 86 V50 Q38 40 48 40 H62 V28 L84 46 L62 64 V52 H50 V86 Z" fill="#fff"/></g></svg><figcaption><b>只准右轉</b></figcaption></figure><figure><svg viewBox="0 0 100 100" role="img"><circle cx="50" cy="50" r="47" fill="#1f5fa8"/><path d="M74 24 L40 58 L40 44 L26 44 L26 78 L60 78 L60 64 L46 64 L80 30 Z" fill="#fff"/></svg><figcaption><b>靠左行駛</b></figcaption></figure><figure><svg viewBox="0 0 100 100" role="img"><circle cx="50" cy="50" r="47" fill="#1f5fa8"/><g transform="translate(16 16) scale(0.68)"><circle cx="26" cy="68" r="15" fill="none" stroke="#fff" stroke-width="6"/><circle cx="76" cy="68" r="15" fill="none" stroke="#fff" stroke-width="6"/><path d="M26 68 L44 40 H68 L76 68 M50 68 L44 40 M66 32 H76" fill="none" stroke="#fff" stroke-width="6" stroke-linejoin="round"/></g></svg><figcaption><b>單車或三輪車徑（禁止汽車駛入）</b></figcaption></figure></div>
+    <h3 class="sg">特別形狀</h3>
+    <div class="signs"><figure><svg viewBox="0 0 100 100" role="img"><path d="M31 4 H69 L96 31 V69 L69 96 H31 L4 69 V31 Z" fill="#c8102e"/><path d="M33 10 H67 L90 33 V67 L67 90 H33 L10 67 V33 Z" fill="none" stroke="#fff" stroke-width="3"/><text x="50" y="64" text-anchor="middle" font-size="38" font-weight="900" fill="#fff">停</text></svg><figcaption><b>停車並讓路（八角形）</b></figcaption></figure><figure><svg viewBox="0 0 100 100" role="img"><path d="M6 12 H94 L50 92 Z" fill="#fff" stroke="#c8102e" stroke-width="9" stroke-linejoin="round"/><text x="50" y="50" text-anchor="middle" font-size="26" font-weight="900" fill="#111">讓</text></svg><figcaption><b>讓路予大路車輛（倒轉三角形）</b></figcaption></figure></div>
+    <h3 class="sg">警告標誌（紅邊三角形）</h3>
+    <div class="signs"><figure><svg viewBox="0 0 100 100" role="img"><path d="M50 7 L95 89 H5 Z" fill="#fff" stroke="#c8102e" stroke-width="8" stroke-linejoin="round"/><g transform="translate(25 38) scale(0.5)"><g fill="#111"><path d="M50 14 A36 36 0 0 1 84 44 L94 44 L78 62 L62 44 L72 44 A24 24 0 0 0 50 26 Z"/><path d="M50 14 A36 36 0 0 1 84 44 L94 44 L78 62 L62 44 L72 44 A24 24 0 0 0 50 26 Z" transform="rotate(120 50 50)"/><path d="M50 14 A36 36 0 0 1 84 44 L94 44 L78 62 L62 44 L72 44 A24 24 0 0 0 50 26 Z" transform="rotate(240 50 50)"/></g></g></svg><figcaption><b>前面有迴旋處</b></figcaption></figure><figure><svg viewBox="0 0 100 100" role="img"><path d="M50 7 L95 89 H5 Z" fill="#fff" stroke="#c8102e" stroke-width="8" stroke-linejoin="round"/><g transform="translate(25 38) scale(0.5)"><rect x="34" y="8" width="32" height="84" rx="6" fill="#111"/><circle cx="50" cy="26" r="9" fill="#e5262f"/><circle cx="50" cy="50" r="9" fill="#f4b400"/><circle cx="50" cy="74" r="9" fill="#1fa34a"/></g></svg><figcaption><b>前面有交通燈號</b></figcaption></figure><figure><svg viewBox="0 0 100 100" role="img"><path d="M50 7 L95 89 H5 Z" fill="#fff" stroke="#c8102e" stroke-width="8" stroke-linejoin="round"/><g transform="translate(25 38) scale(0.5)"><circle cx="52" cy="18" r="8" fill="#111"/><path d="M52 28 L46 56 L34 86 M48 50 L64 86 M50 34 L30 48 M52 34 L70 46" stroke="#111" stroke-width="8" stroke-linecap="round" fill="none"/></g></svg><figcaption><b>前面有行人過路處</b></figcaption></figure><figure><svg viewBox="0 0 100 100" role="img"><path d="M50 7 L95 89 H5 Z" fill="#fff" stroke="#c8102e" stroke-width="8" stroke-linejoin="round"/><g transform="translate(25 38) scale(0.5)"><g transform="translate(-14 10) scale(0.85)"><circle cx="52" cy="18" r="8" fill="#111"/><path d="M52 28 L46 56 L34 86 M48 50 L64 86 M50 34 L30 48 M52 34 L70 46" stroke="#111" stroke-width="8" stroke-linecap="round" fill="none"/></g><g transform="translate(26 22) scale(0.72)"><circle cx="52" cy="18" r="8" fill="#111"/><path d="M52 28 L46 56 L34 86 M48 50 L64 86 M50 34 L30 48 M52 34 L70 46" stroke="#111" stroke-width="8" stroke-linecap="round" fill="none"/></g></g></svg><figcaption><b>前面有兒童（學校）</b></figcaption></figure><figure><svg viewBox="0 0 100 100" role="img"><path d="M50 7 L95 89 H5 Z" fill="#fff" stroke="#c8102e" stroke-width="8" stroke-linejoin="round"/><g transform="translate(25 38) scale(0.5)"><path d="M60 92 V54 Q60 30 36 26 L36 14 L14 32 L36 50 L36 40 Q46 42 46 56 V92 Z" fill="#111"/></g></svg><figcaption><b>前面左彎</b></figcaption></figure><figure><svg viewBox="0 0 100 100" role="img"><path d="M50 7 L95 89 H5 Z" fill="#fff" stroke="#c8102e" stroke-width="8" stroke-linejoin="round"/><g transform="translate(25 38) scale(0.5)"><path d="M46 92 V70 Q46 58 60 52 Q74 46 74 34 V26 H84 L66 6 L48 26 H58 V34 Q58 40 48 44 Q30 52 30 70 V92 Z" fill="#111"/></g></svg><figcaption><b>前面先右轉的連續彎路</b></figcaption></figure><figure><svg viewBox="0 0 100 100" role="img"><path d="M50 7 L95 89 H5 Z" fill="#fff" stroke="#c8102e" stroke-width="8" stroke-linejoin="round"/><g transform="translate(25 38) scale(0.5)"><path d="M24 92 V8 H38 V92 Z M62 92 V60 L76 36 V8 H90 V40 L76 64 V92 Z" fill="#111"/></g></svg><figcaption><b>前面道路右邊收窄</b></figcaption></figure><figure><svg viewBox="0 0 100 100" role="img"><path d="M50 7 L95 89 H5 Z" fill="#fff" stroke="#c8102e" stroke-width="8" stroke-linejoin="round"/><g transform="translate(25 38) scale(0.5)"><path d="M14 92 V64 L30 40 V8 H44 V92 Z M86 92 V64 L70 40 V8 H56 V92 Z" fill="#111"/></g></svg><figcaption><b>前面道路兩邊收窄</b></figcaption></figure><figure><svg viewBox="0 0 100 100" role="img"><path d="M50 7 L95 89 H5 Z" fill="#fff" stroke="#c8102e" stroke-width="8" stroke-linejoin="round"/><g transform="translate(25 38) scale(0.5)"><path d="M42 8 H58 V42 H92 V58 H58 V92 H42 V58 H8 V42 H42 Z" fill="#111"/></g></svg><figcaption><b>前面有十字路口</b></figcaption></figure><figure><svg viewBox="0 0 100 100" role="img"><path d="M50 7 L95 89 H5 Z" fill="#fff" stroke="#c8102e" stroke-width="8" stroke-linejoin="round"/><g transform="translate(25 38) scale(0.5)"><path d="M8 20 H92 V36 H58 V92 H42 V36 H8 Z" fill="#111"/></g></svg><figcaption><b>前面有T型路口</b></figcaption></figure><figure><svg viewBox="0 0 100 100" role="img"><path d="M50 7 L95 89 H5 Z" fill="#fff" stroke="#c8102e" stroke-width="8" stroke-linejoin="round"/><g transform="translate(25 38) scale(0.5)"><path d="M6 30 L94 80 H6 Z" fill="#111"/><text x="54" y="26" font-size="20" font-weight="700" fill="#111">10%</text></g></svg><figcaption><b>前面有向下斜路</b></figcaption></figure><figure><svg viewBox="0 0 100 100" role="img"><path d="M50 7 L95 89 H5 Z" fill="#fff" stroke="#c8102e" stroke-width="8" stroke-linejoin="round"/><g transform="translate(25 38) scale(0.5)"><path d="M6 80 L94 30 V80 Z" fill="#111"/><text x="6" y="26" font-size="20" font-weight="700" fill="#111">10%</text></g></svg><figcaption><b>前面有向上斜路</b></figcaption></figure><figure><svg viewBox="0 0 100 100" role="img"><path d="M50 7 L95 89 H5 Z" fill="#fff" stroke="#c8102e" stroke-width="8" stroke-linejoin="round"/><g transform="translate(25 38) scale(0.5)"><path d="M6 80 Q22 50 38 80 Q54 50 70 80 Q82 60 94 80 Z" fill="#111"/></g></svg><figcaption><b>前面路面不平</b></figcaption></figure><figure><svg viewBox="0 0 100 100" role="img"><path d="M50 7 L95 89 H5 Z" fill="#fff" stroke="#c8102e" stroke-width="8" stroke-linejoin="round"/><g transform="translate(25 38) scale(0.5)"><path d="M6 80 H24 Q50 40 76 80 H94 V86 H6 Z" fill="#111"/></g></svg><figcaption><b>前面有路拱</b></figcaption></figure><figure><svg viewBox="0 0 100 100" role="img"><path d="M50 7 L95 89 H5 Z" fill="#fff" stroke="#c8102e" stroke-width="8" stroke-linejoin="round"/><g transform="translate(25 38) scale(0.5)"><path d="M30 92 V36 H18 L34 10 L50 36 H38 V92 Z M70 8 V64 H82 L66 90 L50 64 H62 V8 Z" fill="#111"/></g></svg><figcaption><b>前面雙程行車</b></figcaption></figure><figure><svg viewBox="0 0 100 100" role="img"><path d="M50 7 L95 89 H5 Z" fill="#fff" stroke="#c8102e" stroke-width="8" stroke-linejoin="round"/><g transform="translate(25 38) scale(0.5)"><circle cx="26" cy="68" r="15" fill="none" stroke="#111" stroke-width="6"/><circle cx="76" cy="68" r="15" fill="none" stroke="#111" stroke-width="6"/><path d="M26 68 L44 40 H68 L76 68 M50 68 L44 40 M66 32 H76" fill="none" stroke="#111" stroke-width="6" stroke-linejoin="round"/></g></svg><figcaption><b>前面有騎單車者</b></figcaption></figure><figure><svg viewBox="0 0 100 100" role="img"><path d="M50 7 L95 89 H5 Z" fill="#fff" stroke="#c8102e" stroke-width="8" stroke-linejoin="round"/><g transform="translate(25 38) scale(0.5)"><circle cx="40" cy="18" r="9" fill="#111"/><path d="M40 30 L34 60 L24 88 M36 56 L50 88 M38 38 L62 50" stroke="#111" stroke-width="8" stroke-linecap="round" fill="none"/><path d="M60 46 L80 84" stroke="#111" stroke-width="5"/><path d="M60 86 Q76 64 94 86 Z" fill="#111"/></g></svg><figcaption><b>前面有道路工程</b></figcaption></figure><figure><svg viewBox="0 0 100 100" role="img"><path d="M50 7 L95 89 H5 Z" fill="#fff" stroke="#c8102e" stroke-width="8" stroke-linejoin="round"/><g transform="translate(25 38) scale(0.5)"><path d="M14 18 H86 L50 84 Z" fill="none" stroke="#111" stroke-width="9"/></g></svg><figcaption><b>前面有「讓路」標誌</b></figcaption></figure><figure><svg viewBox="0 0 100 100" role="img"><path d="M50 7 L95 89 H5 Z" fill="#fff" stroke="#c8102e" stroke-width="8" stroke-linejoin="round"/><g transform="translate(25 38) scale(0.5)"><path d="M6 40 Q50 64 94 40" stroke="#111" stroke-width="6" fill="none"/><path d="M50 52 L40 72 H52 L44 92 L64 66 H52 L60 52 Z" fill="#111"/></g></svg><figcaption><b>前面有架空電纜</b></figcaption></figure><figure><svg viewBox="0 0 100 100" role="img"><path d="M50 7 L95 89 H5 Z" fill="#fff" stroke="#c8102e" stroke-width="8" stroke-linejoin="round"/><g transform="translate(25 38) scale(0.5)"><path d="M30 8 V92 H22 V8 Z" fill="#111"/><circle cx="56" cy="34" r="8" fill="#111"/><circle cx="68" cy="60" r="10" fill="#111"/><circle cx="52" cy="80" r="8" fill="#111"/></g></svg><figcaption><b>前面可能有石塊下墜</b></figcaption></figure><figure><svg viewBox="0 0 100 100" role="img"><path d="M50 7 L95 89 H5 Z" fill="#fff" stroke="#c8102e" stroke-width="8" stroke-linejoin="round"/><g transform="translate(25 38) scale(0.5)"><rect x="20" y="34" width="60" height="44" rx="6" fill="#111"/><rect x="28" y="42" width="44" height="14" fill="#fff"/><path d="M50 34 L40 14 H62" stroke="#111" stroke-width="5" fill="none"/><circle cx="34" cy="82" r="6" fill="#111"/><circle cx="66" cy="82" r="6" fill="#111"/></g></svg><figcaption><b>前面有電車或輕鐵</b></figcaption></figure><figure><svg viewBox="0 0 100 100" role="img"><path d="M50 7 L95 89 H5 Z" fill="#fff" stroke="#c8102e" stroke-width="8" stroke-linejoin="round"/><g transform="translate(25 38) scale(0.5)"><path d="M10 30 H90 M10 50 H90 M10 70 H90" stroke="#111" stroke-width="8" stroke-dasharray="14 8"/></g></svg><figcaption><b>前面有霧</b></figcaption></figure><figure><svg viewBox="0 0 100 100" role="img"><path d="M50 7 L95 89 H5 Z" fill="#fff" stroke="#c8102e" stroke-width="8" stroke-linejoin="round"/><g transform="translate(25 38) scale(0.5)"><g transform="translate(0 -10)"><path d="M18 60 L26 42 H74 L82 60 V72 H18 Z" fill="#111"/><rect x="30" y="46" width="40" height="10" fill="#fff"/><circle cx="32" cy="74" r="7" fill="#111"/><circle cx="68" cy="74" r="7" fill="#111"/></g><path d="M18 88 Q30 72 42 88 T66 88 M40 88 Q52 72 64 88 T88 88" stroke="#111" stroke-width="4" fill="none"/></g></svg><figcaption><b>前面路滑</b></figcaption></figure></div>
+    <h3 class="sg">方向及提示標誌（長方形）</h3>
+    <div class="signs"><figure><svg viewBox="0 0 100 100" role="img"><rect x="4" y="16" width="92" height="68" rx="6" fill="#1f5fa8"/><path d="M14 42 H64 V30 L88 50 L64 70 V58 H14 Z" fill="#fff"/></svg><figcaption><b>單程路</b></figcaption></figure><figure><svg viewBox="0 0 100 100" role="img"><rect x="4" y="16" width="92" height="68" rx="6" fill="#1f5fa8"/><text x="50" y="58" text-anchor="middle" font-size="18" font-weight="700" fill="#fff">九龍 →</text></svg><figcaption><b>一般道路方向標誌（藍底）</b></figcaption></figure><figure><svg viewBox="0 0 100 100" role="img"><rect x="4" y="16" width="92" height="68" rx="6" fill="#1f7a3f"/><text x="50" y="58" text-anchor="middle" font-size="18" font-weight="700" fill="#fff">機場 ↑</text></svg><figcaption><b>快速公路方向標誌（綠底）</b></figcaption></figure><figure><svg viewBox="0 0 100 100" role="img"><rect x="4" y="16" width="92" height="68" rx="6" fill="#fff" stroke="#888" stroke-width="3"/><text x="50" y="58" text-anchor="middle" font-size="18" font-weight="700" fill="#111">醫院 ←</text></svg><figcaption><b>區內目的地標誌（白底）</b></figcaption></figure><figure><svg viewBox="0 0 100 100" role="img"><rect x="4" y="16" width="92" height="68" rx="6" fill="#f4c20d"/><text x="50" y="58" text-anchor="middle" font-size="18" font-weight="700" fill="#111">改道 →</text></svg><figcaption><b>臨時改道標誌（黃底）</b></figcaption></figure><figure><svg viewBox="0 0 100 100" role="img"><rect x="4" y="16" width="92" height="68" rx="6" fill="#fff" stroke="#888" stroke-width="3"/><text x="50" y="58" text-anchor="middle" font-size="20" font-weight="800" fill="#111">的士</text></svg><figcaption><b>的士站</b></figcaption></figure></div>
+    <p class="foot">以上係按《道路使用者守則》第八章標誌名稱畫嘅示意圖，顏色同圖案貼近原圖，但細節可能有出入，以運輸署原圖為準。</p>
+  </div>
+  <div class="card">
+    <h3>交通標誌形狀同顏色</h3>
+    <div class="facts">
+      <div>圓形</div><div class="v t">命令（限制標誌）</div>
+      <div>紅邊圓形</div><div class="v t">禁制（禁止某行動）</div>
+      <div>藍色圓形</div><div class="v t">強制（必須照做）</div>
+      <div>三角形（尖端向上）</div><div class="v t">警告</div>
+      <div>長方形</div><div class="v t">指示或提示</div>
+      <div>八角形</div><div class="v t">「停車」標誌</div>
+      <div>倒置三角形</div><div class="v t">「讓路」標誌</div>
+      <div>藍底方向標誌</div><div class="v t">一般道路</div>
+      <div>綠底方向標誌</div><div class="v t">快速公路</div>
+      <div>白底</div><div class="v t">區內目的地</div>
+      <div>黃底</div><div class="v t">臨時路線、改道</div>
+      <div>「必須停車綫」告示牌</div><div class="v">前方 100 米</div>
+      <div>「必須讓路綫」告示牌</div><div class="v">前方 50 米</div>
+      <div>受風車輛不准駛入</div><div class="v t">高度 &gt;1.6 米車輛、電單車、機動三輪車</div>
+    </div>
+  </div>
+  <div class="card">
+    <h3>交通燈同行車線信號</h3>
+    <ul>
+      <li>紅燈交替閃動（例如消防局出口）：所有車輛<b>必須停下</b></li>
+      <li>紅燈時綠色箭嘴亮起：安全下可按箭嘴方向行駛</li>
+      <li>全綠燈但右轉箭嘴熄滅：駛到右轉袋口等候，對面有安全空隙先轉</li>
+      <li>已駛離停車線：無須理會剛才燈號，繼續小心前進</li>
+      <li>主要交通燈失靈：跟輔助交通燈</li>
+      <li>行車線信號<b>黃燈閃動</b>：前方有危險，準備停車</li>
+      <li>行車線信號<b>紅色交叉</b>：不可使用該線</li>
+      <li>行車線信號<b>綠色斜箭嘴</b>：安全下轉往箭嘴方向，切勿突然轉線</li>
+      <li>緊急車輛：雙音響號、警號，或閃白、紅、藍燈，必須讓路</li>
+      <li>警員截停：未獲指示不可轉左或轉右；警員手號優先於交通燈</li>
+      <li>信號只可表明自己意向，不可用嚟指示其他人</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3>道路標記同反光路釘</h3>
+    <div class="facts">
+      <div>車路分界線</div><div class="v t">線段短、間距長</div>
+      <div>警告線</div><div class="v t">線段長、間距短 = 前有危險</div>
+      <div>白色斜線範圍</div><div class="v t">不可駛越或駛入</div>
+      <div>黃色橫條</div><div class="v t">前有出口、迴旋處或收費廣場，減速</div>
+      <div>白色路釘</div><div class="v t">行車線或路中央</div>
+      <div>紅色路釘</div><div class="v t">車道左邊緣</div>
+      <div>琥珀色路釘</div><div class="v t">右邊緣（近中央分隔帶）</div>
+      <div>綠色路釘</div><div class="v t">路口、路旁停車處、讓車處</div>
+      <div>安全島有「靠左行駛」</div><div class="v t">由左邊駛過</div>
+    </div>
+  </div>
+  <div class="card">
+    <h3>斜路泊車</h3>
+    <div class="facts">
+      <div>上坡，有路邊石</div><div class="v t">軚盤扭向<b>右</b>，入一波</div>
+      <div>下坡，有路邊石</div><div class="v t">軚盤扭向<b>左</b>，入後波</div>
+      <div>無路邊石（上坡或下坡）</div><div class="v t">軚盤扭向<b>左</b></div>
+    </div>
+    <p class="tip"><b>記法：</b>只有「上坡有路邊石」扭右，其他全部扭左。</p>
+  </div>
+  <div class="card">
+    <h3>兒童同乘客</h3>
+    <ul>
+      <li>未滿 3 歲坐前座：必須用認可兒童束縛設備</li>
+      <li>3 歲或以上但未滿 15 歲：前座後座都要佩戴安全帶或束縛設備</li>
+      <li>12 歲以上或體重超過 36 公斤：可以用普通安全帶</li>
+      <li>背向嬰孩安全裝置：不可放喺有氣袋嘅前座</li>
+      <li>前座乘客不可抱住兒童；兒童要最先上車、最後落車</li>
+      <li>冇成年人看管，11 歲以下兒童不可喺道路騎單車</li>
+      <li>學校交通安全隊放行，但仍有行人過馬路：仍須讓路</li>
+      <li>接學童：停喺離學校稍遠嘅安全地方，唔好停校門前或對面</li>
+      <li>乘客不可喺車未完全停定時畀車錢</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3>其他常考</h3>
+    <ul>
+      <li>行車證貼喺<b>擋風玻璃左方</b>；不可混用交叉紋同徑向紋輪胎；油箱蓋開住唔可以開引擎</li>
+      <li>窄路讓車處喺你右邊：喺對面暫停等候；盡量讓上斜車；唔可以喺讓車處泊車</li>
+      <li>坡度 1:5（20%）比 1:10（10%）斜；落長斜要用低波</li>
+      <li>三線分隔車路：右線只用嚟超車；錯過路口要去下一個路口</li>
+      <li>較高車速道路：可能係 70、80、100 或 110 km/h</li>
+      <li>最高車速：巴士及中、重型貨車 70 km/h，公共小巴 80 km/h</li>
+      <li>道路工程：一見警告就減速；「停」字牌唔好駛過；臨時交通燈紅燈喺標誌前等</li>
+      <li>冇安全島嘅電車站：喺黃色停車線前停，等乘客上落；唔可以駛入電車線</li>
+      <li>帶領動物嘅人要求停車：必須停</li>
+      <li>綠色人像過路處：唔可以停喺過路處上；唔好踏空油逼行人</li>
+      <li>行人優先使用區：要讓路畀行車道上嘅行人</li>
+      <li>的士站時間字牌：所示時間係的士站，其他時間准許的士泊車</li>
+    </ul>
+  </div>
+  <p class="tip"><b>仲要睇：</b>乙部有交通標誌圖題。上面已經整理咗標誌形狀同顏色規律，考前最好再睇一次守則第 8 章「道路語言」嘅標誌圖。</p>
+</section>
+
+<p class="foot">資料來源：<a href="https://www.td.gov.hk/filemanager/tc/content_5405/New%20Combined%20Written%20Test%20Booklet_C.pdf" target="_blank" rel="noopener">運輸署《的士及網約車營運小冊子》</a> · <a href="https://www.td.gov.hk/filemanager/tc/content_5405/Guide%20to%20Taxi%20and%20Ride-hailing%20Vehicle%20Combined%20Written%20Test_C.pdf" target="_blank" rel="noopener">《綜合筆試指引》</a> · <a href="https://www.td.gov.hk/en/road_safety/road_users_code/index/index.html" target="_blank" rel="noopener">《道路使用者守則》</a></p>
+</div>
+
+<script>
+(function(){
+const PLACES=`瑪麗醫院|薄扶林;威爾斯親王醫院|沙田;贊育醫院|西營盤;東華醫院|上環;葛量洪醫院|黃竹坑;東區尤德夫人那打素醫院|柴灣;東華東院|大坑;鄧肇堅醫院|灣仔;律敦治醫院|灣仔;伊利沙伯醫院|油麻地;九龍醫院|九龍城;香港佛教醫院|樂富;香港眼科醫院|九龍城;東華三院黃大仙醫院|沙田坳道;聖母醫院|黃大仙;廣華醫院|油麻地;明愛醫院|長沙灣;瑪嘉烈醫院|荔景;葵涌醫院|荔景;仁濟醫院|荃灣;基督教聯合醫院|秀茂坪;靈實醫院|將軍澳;將軍澳醫院|寶寧里;沙田醫院|亞公角街;雅麗氏何妙齡那打素醫院|大埔;大埔醫院|全安路;北區醫院|上水;屯門醫院|青松觀路;博愛醫院|元朗;嘉諾撒醫院|半山;明德國際醫院|山頂;香港港安醫院|跑馬地;聖保祿醫院|東院道;養和醫院|跑馬地;寶血醫院（明愛）|深水埗;播道醫院|九龍城;聖德肋撒醫院|九龍城;香港浸信會醫院|九龍塘;荃灣港安醫院|荃景圍;仁安醫院|富健街;青山醫院|屯門;北大嶼山醫院|松仁路;天水圍醫院|天壇街;港怡醫院|黃竹坑;香港兒童醫院|九龍灣;啟德醫院|九龍灣;香港中醫醫院|將軍澳;東華三院馮堯敬醫院|薄扶林;黃竹坑醫院|黃竹坑徑;小欖醫院|青松觀路;大口環根德公爵夫人兒童醫院|薄扶林;香港中文大學醫院|澤祥街;星光大道|尖沙咀;金紫荊廣場|灣仔;香港迪士尼樂園|竹篙灣;香港濕地公園|天水圍;玉器市場|油麻地;九龍寨城公園|九龍城;昂坪纜車東涌纜車站|達東路;香港海洋公園|黃竹坑;寶蓮禪寺|昂坪;凌霄閣|山頂道;亞洲國際博覽館|赤鱲角;香港會議展覽中心|灣仔;屏山文物徑|元朗;香港文化博物館|沙田;香港歷史博物館|尖沙咀;香港科學館|尖沙咀;香港太空館|尖沙咀;香港大會堂|中環;香港體育館（紅館）|紅磡;香港文化中心|尖沙咀;伊利沙伯體育館|灣仔;1881|廣東道;沙田大會堂|源禾路;沙田車公廟|大圍;文武廟|上環;林村許願廣場|大埔;龍躍頭文物徑|粉嶺;美利樓|赤柱;和昌大押|莊士敦道;大館|荷李活道;香港藝術館|尖沙咀;香港藝術中心|灣仔;香港故宮文化博物館|博物館道;戲曲中心|柯士甸道西;M+|博物館道;啟德體育園|承啟道;香港文華東方酒店|中環;美利酒店|中環;香港港麗酒店|金鐘道;香港灣仔帝盛酒店|皇后大道東;港島皇悅酒店|軒尼詩道;六國酒店|灣仔;香港萬麗海景酒店|灣仔;柏寧酒店|銅鑼灣;北角海逸酒店|英皇道;奧華酒店 南岸|黃竹坑;南灣如心酒店|黃竹坑;九龍香格里拉大酒店|尖沙咀;香港半島酒店|尖沙咀;香港W酒店|柯士甸道西;香港麗思卡爾頓酒店|柯士甸道西;帝京酒店|旺角;香港旺角帝盛酒店|大角咀;九龍海逸君綽酒店|紅磡;8度海逸酒店|土瓜灣;香港啟德帝盛酒店|承啟道;九龍東如心酒店|觀塘;九龍東帝苑酒店|將軍澳;麗豪酒店|沙田;荃灣西如心酒店|楊屋道;帝景酒店|汀九;香港黃金海岸酒店|掃管笏;嘉湖海逸酒店|天水圍;諾富特東薈城酒店|東涌;麗豪航天城酒店|赤鱲角;香港富麗敦海洋公園酒店|黃竹坑;皇家太平洋酒店|尖沙咀;香港喜來登酒店|尖沙咀;香港百樂酒店|尖沙咀;香港金域假日酒店|尖沙咀;帝苑酒店|尖沙咀;千禧新世界香港酒店|尖沙咀;海景嘉福洲際酒店|尖沙咀;港威酒店|尖沙咀;美麗華酒店|尖沙咀;香港瑰麗酒店|尖沙咀;馬哥孛羅香港酒店|尖沙咀;香港金普頓酒店|尖沙咀;都會海逸酒店|紅磡;香港迪士尼樂園酒店|竹篙灣;迪士尼探索家度假酒店|竹篙灣;迪士尼好萊塢酒店|竹篙灣;香港天際萬豪酒店|赤鱲角;富豪機場酒店|赤鱲角;政府總部|添美道;金鐘道政府合署|金鐘道;灣仔政府大樓|港灣道;北角政府合署|渣華道;旺角政府合署|聯運街;九龍政府合署|油麻地;西九龍政府合署|海庭道;培正道政府合署|培正道;何文田政府合署|忠孝街;馬頭角道政府合署|馬頭角道;土瓜灣政府合署|馬頭圍道;深水埗政府合署|元州街;長沙灣政府合署|長沙灣道;荔枝角政府合署|荔灣道;東九龍政府合署|觀塘;牛頭角政府合署|安華街;西貢政府合署|親民街;沙田政府合署|上禾輋路;大埔政府合署|汀角路;北區政府合署|粉嶺;荃灣政府合署|西樓角路;葵興政府合署|興芳路;屯門政府合署|屯喜路;大興政府合署|屯門;元朗政府合署|橋樂坊;梅窩政府合署|銀鑛灣路;機電工程署總部大樓|啟成街;入境事務處總部|將軍澳;中區警區總部|中港道;旺角區警署|太子道西;觀塘區警署|鯉魚門道;將軍澳區警署|寶琳北路;荃灣區警署|荃景圍;立法會綜合大樓|金鐘;香港禮賓府|中環;香港中央圖書館|銅鑼灣;醫院管理局大樓|九龍城;終審法院|中環;高等法院|金鐘道;區域法院|港灣道;東區法院大樓|西灣河;西九龍法院大樓|通州街;九龍城法院大樓|亞皆老街;觀塘法院大樓|鯉魚門道;沙田法院大樓|宜正里;粉嶺法院大樓|璧峰路;屯門法院大樓|屯喜路;勞資審裁處|加士居道;土地審裁處|加士居道;小額錢債審裁處|通州街;怡和大廈|中環;永安集團大廈|中環;香港滙豐總行大廈|中環;長江集團中心|中環;環球大廈|中環;中遠大廈|上環;統一中心|金鐘;力寶中心|金鐘;利園|銅鑼灣;友邦廣場|北角;合和中心|灣仔;美麗華廣場|尖沙咀;港威大廈|尖沙咀;企業廣場|九龍灣;創紀之城|觀塘;如心廣場|荃灣;電視廣播城|將軍澳;時代廣場|銅鑼灣;利舞臺|銅鑼灣;海港城|尖沙咀;K11 MUSEA|尖沙咀;朗豪坊|旺角;U Corner|旺角;又一城|達之路;荷里活廣場|鑽石山;黃埔新天地|紅磡;裕民坊|觀塘;The ANGLE|觀塘;AIRSIDE|啟德;雙子匯|啟德;SOHO West|長沙灣;圍方|車公廟路;新城市廣場|沙田;東薈城名店倉|東涌;太古城|鰂魚涌;杏花邨|柴灣;海怡半島|鴨脷洲;貝沙灣|薄扶林;淘大花園|九龍灣;德福花園|九龍灣;麗港城|觀塘;黃埔花園|紅磡;海逸豪園|紅磡;美孚新邨|荔枝角;嘉湖山莊|天水圍;錦綉花園|元朗;綠楊新邨|荃灣;麗城花園|荃灣;盈翠半島|青衣;珀麗灣|馬灣;沙田第一城|沙田;新港城|馬鞍山;逸瓏灣|白石角;東堤灣畔|東涌;映灣園|東涌;愉景灣|大嶼山;香港大學本部大樓|般咸道;香港中文大學|沙田;香港科技大學|清水灣;香港理工大學|紅磡;香港城市大學|九龍塘;香港浸會大學|九龍塘;嶺南大學|屯門;香港教育大學|大埔;香港都會大學|何文田;香港樹仁大學|北角;香港恒生大學|小瀝源;聖方濟各大學|翠嶺里;信和廣場|銅鑼灣;修頓中心|灣仔`.split(";").map(s=>s.split("|"));
+const ROUTES=`西貢匡湖居|大口環根德公爵夫人兒童醫院|西區海底隧道;紅磡高山劇場|長沙灣廣場|佛光街、梭椏道及亞皆老街;荃灣環宇海灣|米埔自然保護區|大欖隧道及青朗公路;元朗大會堂|馬鞍山新港城中心|林錦公路;荃灣沙咀道遊樂場|沙田中心|大河道及象鼻山道;深水埗南昌邨|港鐵上水站|青沙公路及尖山隧道;佐敦（西九龍站）巴士總站|銅鑼灣皇悅酒店|康莊道及紅磡海底隧道;九龍塘又一城|沙田大會堂|窩打老道及獅子山隧道;西九文化區戲曲中心|九龍灣德福廣場|漆咸道北、東九龍走廊及啟德隧道;上水廣場|入境事務處總部|粉嶺公路及大老山隧道;基督教聯合醫院|旺角區警署|新清水灣道及太子道東;荃灣荃豐中心|新蒲崗香港考試及評核局|青山公路葵涌段及龍翔道;紅磡置富都會|北角廉政公署總部大樓|紅磡海底隧道;九龍塘香港浸會大學大學會堂|灣仔鷹君中心|紅磡海底隧道;九龍公共圖書館|跑馬地馬場|紅磡海底隧道;啟德嘉匯|美孚廣場|中九龍繞道、連翔道及荔枝角道;西九龍政府合署|半山香港佑寧堂|西區海底隧道、干諾道西天橋及紅棉路;曼克頓山|科學園|青沙公路及吐露港公路`.split(";").map(s=>s.split("|"));
+const ROUTES_OFFICIAL=[["西灣河嘉亨灣","旺角拔萃男書院","告士打道、紅磡海底隧道及公主道（運輸署示範題）"],["荃灣悅來酒店","上環港澳碼頭","青葵公路、西九龍公路及西區海底隧道（運輸署示範題）"]];
+const CATS=[["醫院","香港中文大學醫院"],["旅遊景點","啟德體育園"],["酒店","富豪機場酒店"],["政府樓宇及法院","小額錢債審裁處"],["商業大廈","電視廣播城"],["購物商場","東薈城名店倉"],["住宅樓宇","愉景灣"],["大專院校","聖方濟各大學"],["運輸署示範題","修頓中心"]];
+let c=0;PLACES.forEach(p=>{p[2]=CATS[c][0];if(p[0]===CATS[c][1]&&c<CATS.length-1)c++});
+const STREET=/(道|路|街|坊|里|徑|圍)$/;
+const DISTRICT_EXC=["荃景圍","大圍","秀茂坪"];
+const isStreet=l=>STREET.test(l)&&!DISTRICT_EXC.includes(l);
+let mode="area";
+const esc=s=>String(s).replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
+function draw(){
+  const q=document.getElementById("q").value.trim();
+  const list=PLACES.filter(p=>!q||p[0].includes(q)||p[1].includes(q)||p[2].includes(q));
+  const groups=new Map();
+  list.forEach(p=>{const k=mode==="area"?p[1]:p[2];if(!groups.has(k))groups.set(k,[]);groups.get(k).push(p)});
+  let keys=[...groups.keys()];
+  if(mode==="area")keys.sort((a,b)=>groups.get(b).length-groups.get(a).length||a.localeCompare(b,"zh-HK"));
+  document.getElementById("count").textContent="顯示 "+list.length+" / "+PLACES.length+" 個地方";
+  document.getElementById("plist").innerHTML=keys.length?keys.map(k=>{const g=groups.get(k);return `<div class="group"><h3>${esc(k)}${mode==="area"&&isStreet(k)?' <small style="color:var(--taxi)">街道</small>':""}<small>${g.length}</small></h3><div class="chips">${g.map(p=>mode==="area"?`<span class="pchip">${esc(p[0])}</span>`:`<span class="pchip ${isStreet(p[1])?"st":""}">${esc(p[0])}<em>${esc(p[1])}</em></span>`).join("")}</div></div>`}).join(""):'<p class="lead">搵唔到相關地方，試下其他字。</p>';
+}
+document.getElementById("q").addEventListener("input",draw);
+["area","cat"].forEach(m=>document.getElementById("by-"+m).onclick=()=>{mode=m;document.getElementById("by-area").setAttribute("aria-pressed",m==="area");document.getElementById("by-cat").setAttribute("aria-pressed",m==="cat");draw()});
+draw();
+document.getElementById("rtable").insertAdjacentHTML("beforeend",[...ROUTES,...ROUTES_OFFICIAL].map(r=>`<tr><td>${esc(r[0])}</td><td>${esc(r[1])}</td><td><b>${esc(r[2])}</b></td></tr>`).join(""));
+
+})();
+</script>
+
+
+<div class="wrap" id="quizView" hidden><div id="app" style="display:flex;flex-direction:column;gap:18px"></div></div>
+
+<script>
+// ---------- 題庫 ----------
+// 甲部：載客服務知識（按運輸署《的士及網約車營運小冊子》2026年8月3日版）。第一個選項為正確答案，出題時會打亂。
+const KNOW=[
+["的士的最高乘客座位數目是多少？",["六人","五人","七人","八人"],"小冊子：的士的最高乘客座位數目為六人。"],
+["網約車本質是一輛私家車，私家車的最高乘客座位數目是多少？",["七人","五人","六人","九人"],"私家車的最高乘客座位數目為七人。"],
+["市區的士的車身顏色是：",["紅色","綠色","藍色","黃色"],"市區紅、新界綠、大嶼山藍。"],
+["新界的士的車身顏色是：",["綠色","紅色","藍色","銀色"],"市區紅、新界綠、大嶼山藍。"],
+["大嶼山的士的車身顏色是：",["藍色","綠色","紅色","白色"],"市區紅、新界綠、大嶼山藍。"],
+["的士車頭及車尾顯示法定座位數目的字牌是：",["綠底白字","白底黑字","黃底黑字","紅底白字"],"的士車頭車尾須展示綠底白字字牌，顯示法定座位數目。"],
+["的士車頂「TAXI」照明標誌應在何時亮着？",["的士可供夜間出租時","任何時間","只在載客時","只在下雨時"],"標誌應於的士可供夜間出租時間亮着，車前車後都要看得清楚。"],
+["網約車可否在街上直接接載截車的乘客？",["不可以，只可接受持牌平台預約的訂單","可以，只要乘客同意","可以，但只限晚上","可以，只要在的士站內"],"網約車只可接受通過持牌網約車平台預約和安排的訂單。"],
+["「人車綁定」是指：",["網約車須以個人名義登記，並只可由登記車主駕駛提供服務","司機須與平台簽約一年","一個司機可登記多部網約車","車輛須由公司名義登記"],"網約車須以個人名義登記，亦只可由該車的登記車主駕駛提供網約車載客服務。"],
+["網約車一般可以在哪裏上落客？",["非限制區及一般停車灣","的士站","限制區","封閉道路"],"網約車須遵守私家車規定，只可在非限制區及一般停車灣上落客。"],
+["正在提供載客服務的網約車須展示甚麼？",["運輸署發出的網約車車輛證明書","平台的廣告貼紙","司機的身分證副本","車隊的士識別牌"],"須按運輸署署長指明的位置及方式展示車輛證明書。私人用途時展示亦不屬違法。"],
+["網約車車費由誰釐定？",["持牌平台自訂，但須在行程開始前讓乘客知悉","按的士計程錶收費","由司機與乘客上車後議價","由運輸署按里數劃一釐定"],"持牌平台可自訂車費，但須於行程開始前讓乘客知悉收費安排。"],
+["自2026年4月1日起，的士司機須提供至少多少種電子繳費媒介？",["兩種（一種二維碼及一種非二維碼）","一種","三種","無須提供"],"法例規定須提供至少兩種：一種二維碼、一種非二維碼電子繳費媒介。"],
+["的士的收據打印設備故障時，司機應：",["以預印表格手寫收據代替","拒絕發出收據","叫乘客自行拍照","免收車費"],"打印設備故障時，司機應採用預印的表格以手寫收據代替。"],
+["網約車行程完成後，誰須向乘客傳送行程收據？",["持牌平台","司機以短訊傳送","運輸署","乘客自行申請"],"持牌平台須在行程完成後傳送行程收據，並列明行程的具體資料。"],
+["的士司機在提供載客服務時須在車內展示：",["有效的的士司機證","駕駛執照正本","身分證","的士牌照正本"],"司機必須在車內展示有效之的士司機證，方便乘客及執法人員確認身分。"],
+["網約車司機身分一般如何確認？",["按平台要求進行程序（例如人臉辨識），平台亦向乘客提供司機照片及姓名","乘客查看司機身分證","向警方登記每一程","無須確認"],"司機須按平台要求進行人臉辨識等程序；平台確認訂單時須向乘客提供司機照片及資料。"],
+["的士司機在任何兩年期間被記多少分或以上，可被取消駕駛的士資格？",["15分","10分","8分","20分"],"兩年內被記15分或以上，可被取消駕駛的士資格。"],
+["的士司機首次被取消駕駛的士資格，停牌期為：",["3個月","1個月","6個月","12個月"],"首次停牌3個月，其後每次6個月。"],
+["的士司機其後再被取消駕駛的士資格，每次停牌期為：",["6個月","3個月","12個月","2年"],"首次停牌3個月，其後每次6個月。"],
+["的士司機兩年內被記8分或以上但少於15分，運輸署會：",["發出「的士司機違例記分提示」","即時停牌","吊銷的士牌照","要求重考筆試"],"8至14分會收到記分提示通知書。"],
+["的士司機被記10分或以上，須在多久內自費修習的士服務改進課程？",["通知日期起計3個月內","1個月內","6個月內","1年內"],"會收到強制修習課程通知，須於三個月內完成。"],
+["沒有合理辯解而沒有在限期內完成的士服務改進課程，最高罰則是：",["罰款5,000元及監禁1個月","罰款2,000元","罰款10,000元及監禁6個月","只會記分"],"屬犯罪，可處第2級罰款（5,000元）及監禁1個月。"],
+["完成的士服務改進課程並考試合格，如減分前總分大於3分，可扣減：",["3分","5分","全部分數","1分"],"總分大於3分扣3分；不大於3分則扣減所有分數。"],
+["「濫收車費」會被記多少分？",["10分","5分","3分","15分"],"濫收車費、拒載、拒絕駛往指示地點、損壞計程錶屬10分。"],
+["「故意拒絕或忽略接受租用」（拒載）會被記多少分？",["10分","5分","3分","8分"],"拒載屬10分罪行。"],
+["「兜路」（沒有採用最直接而切實可行的路線）會被記多少分？",["5分","3分","10分","15分"],"兜客、兜路、釣泥鯭、欺騙或拒絕知會收費及路線屬5分。"],
+["「釣泥鯭」（未經租用人同意讓其他人上車）會被記多少分？",["5分","3分","10分","8分"],"釣泥鯭屬5分罪行。"],
+["「拒絕或忽略發出收據」會被記多少分？",["3分","5分","10分","1分"],"拒絕運載要求數目乘客、拒發收據、沒有將計程錶設於記錄位置屬3分。"],
+["「沒有將的士計程錶設定於記錄位置」會被記多少分？",["3分","5分","10分","不記分"],"屬3分罪行。"],
+["10分罪行重犯者的最高罰則是：",["第四級罰款25,000元及監禁12個月","罰款10,000元及監禁6個月","罰款5,000元及監禁1個月","罰款2,000元"],"初犯最高10,000元及6個月；重犯提高至25,000元及12個月。"],
+["計算記分的「兩年期間」以甚麼日期為準？",["干犯罪行的日期","被記分的日期","收到通知的日期","每年1月1日"],"應參照干犯表列罪行的日期計算，而非記分日期。"],
+["網約車車輛駕駛許可證持有人的私家車正式駕駛執照被取消，其許可證會：",["即予取消","暫停一個月","不受影響","自動轉為的士司機證"],"私家車或輕型貨車正式駕駛執照被取消，網約車車輛駕駛許可證會即予取消。"],
+["輪胎胎面坑紋的深度最少要有多少？",["1毫米","0.5毫米","2毫米","3毫米"],"胎面須有坑紋環繞輪胎外圓周四分三寬度，深度至少1毫米。"],
+["駕駛時不可在前方放置多於多少部流動電訊裝置？",["2部","1部","3部","4部"],"不可多於兩部，每部屏幕對角長度不可超過19厘米。"],
+["放在司機前方的流動電訊裝置，每部屏幕對角長度不可超過：",["19厘米","15厘米","21厘米","25厘米"],"屏幕對角長度不可超過19厘米；違例最高罰款2,000元。"],
+["違反流動電訊裝置規定的司機最高可被罰款：",["2,000元","1,000元","5,000元","10,000元"],"最高罰款2,000元。"],
+["私家車上幾歲以下兒童（除非身高達1.35米）必須使用兒童束縛設備？",["八歲以下","六歲以下","十歲以下","三歲以下"],"八歲以下（身高未達1.35米）須用兒童束縛設備；違例司機最高罰款2,000元。"],
+["成年乘客陪同未能穩坐的兒童乘搭的士時，應：",["成年人先佩戴自己的安全帶，然後抱緊兒童坐在膝上","兒童與成年人共用一條安全帶","兒童坐前座","無須佩戴安全帶"],"的士不適用兒童束縛設備規定；成年人須先扣好自己的安全帶再抱緊兒童。"],
+["放在的士車廂內的輕便個人手提行李，每件長、闊、高總和不超過多少可免費運載？",["140厘米","100厘米","120厘米","160厘米"],"不超過140厘米可免費運載。"],
+["擺放在的士車尾行李廂內的行李：",["每件不論大小均可收取行李附加費","一律免費","只有超過140厘米才收費","只限一件"],"司機可就車尾行李廂內每件行李收取附加費。"],
+["傷殘乘客攜帶的輪椅或拐杖：",["不論大小及擺放位置，均可免費運載","放車尾須收附加費","只可放車廂內","司機可拒絕運載"],"傷殘乘客的輔助行動物件一律免費運載。"],
+["的士可否運載未經牢固包裝的貨物？",["不可以","可以，收附加費便可","可以，放車尾便可","可以，乘客同意便可"],"個人手提行李不得包括危險或厭惡性質貨物，以及未經牢固包裝的貨物。"],
+["乘客攜帶動物上的士，附帶條件由誰決定？",["的士司機酌情決定","運輸署","乘客","車主"],"由司機酌情決定；動物造成的損壞由乘客負責賠償。"],
+["網約車乘客可否攜帶動物上車？",["由持牌平台決定，並於行程開始前與乘客協定","一律禁止","一律准許","由司機上車後決定"],"網約車方面由個別持牌平台決定並事先協定。"],
+["遇上中途壞車或緊急事故，司機應首先：",["顧及自己和乘客安全，並立即亮起危險警告燈","立即下車檢查引擎","叫乘客自行離開","繼續駕駛到目的地"],"先顧及安全並亮起危險警告燈，如可能把車駛離行車道。"],
+["司機打開車門讓乘客落車前，須確保：",["車輛已完全停下並拉緊手掣","引擎已熄","乘客已付款","已打右轉燈"],"打開車門前須確保車輛已完全停下並拉緊手掣。"],
+["駕駛時感到疲倦，以下哪一項是不正確的做法？",["在快速公路路邊停車休息","打開車窗呼吸新鮮空氣","調低冷氣溫度","找合適的泊車位停車休息"],"切勿在快速公路或有快速車輛行駛的道路上停車。"],
+["下列哪一項為不正確的？",["無需理會接載人數","行車前檢查車窗玻璃有否破裂","行車時留意四周環境","確保乘客沒有遺漏隨身物品於車廂"],"運輸署示範題：接載人數必須理會，不可超載。"],
+["司機可否因乘客的國籍、種族、性別、年齡或殘疾而拒載？",["絕對不可以","可以，如司機不舒服","可以，如乘客不懂廣東話","可以，晚上可以"],"小冊子明言司機絕不可因上述原因出現不禮貌或拒載行為。"],
+["車隊的士識別牌的底色代表甚麼？",["其許可的營運地區範圍","車隊公司名稱","車齡","是否接受電子付款"],"識別牌底色對應營運範圍：紅市區、綠新界、藍大嶼山。"],
+["車隊的士在街頭被截乘時，應如何收費？",["與一般的士一樣按法定收費表收費","按車隊自訂車費","與乘客議價","按網約車平台價"],"自訂車費只適用於預定行程；街頭截乘按《第374D章》附表5收費。"],
+];
+
+// 地方試題（小冊子附表）："地方|位置"
+const PLACES=`瑪麗醫院|薄扶林;威爾斯親王醫院|沙田;贊育醫院|西營盤;東華醫院|上環;葛量洪醫院|黃竹坑;東區尤德夫人那打素醫院|柴灣;東華東院|大坑;鄧肇堅醫院|灣仔;律敦治醫院|灣仔;伊利沙伯醫院|油麻地;九龍醫院|九龍城;香港佛教醫院|樂富;香港眼科醫院|九龍城;東華三院黃大仙醫院|沙田坳道;聖母醫院|黃大仙;廣華醫院|油麻地;明愛醫院|長沙灣;瑪嘉烈醫院|荔景;葵涌醫院|荔景;仁濟醫院|荃灣;基督教聯合醫院|秀茂坪;靈實醫院|將軍澳;將軍澳醫院|寶寧里;沙田醫院|亞公角街;雅麗氏何妙齡那打素醫院|大埔;大埔醫院|全安路;北區醫院|上水;屯門醫院|青松觀路;博愛醫院|元朗;嘉諾撒醫院|半山;明德國際醫院|山頂;香港港安醫院|跑馬地;聖保祿醫院|東院道;養和醫院|跑馬地;寶血醫院（明愛）|深水埗;播道醫院|九龍城;聖德肋撒醫院|九龍城;香港浸信會醫院|九龍塘;荃灣港安醫院|荃景圍;仁安醫院|富健街;青山醫院|屯門;北大嶼山醫院|松仁路;天水圍醫院|天壇街;港怡醫院|黃竹坑;香港兒童醫院|九龍灣;啟德醫院|九龍灣;香港中醫醫院|將軍澳;東華三院馮堯敬醫院|薄扶林;黃竹坑醫院|黃竹坑徑;小欖醫院|青松觀路;大口環根德公爵夫人兒童醫院|薄扶林;香港中文大學醫院|澤祥街;星光大道|尖沙咀;金紫荊廣場|灣仔;香港迪士尼樂園|竹篙灣;香港濕地公園|天水圍;玉器市場|油麻地;九龍寨城公園|九龍城;昂坪纜車東涌纜車站|達東路;香港海洋公園|黃竹坑;寶蓮禪寺|昂坪;凌霄閣|山頂道;亞洲國際博覽館|赤鱲角;香港會議展覽中心|灣仔;屏山文物徑|元朗;香港文化博物館|沙田;香港歷史博物館|尖沙咀;香港科學館|尖沙咀;香港太空館|尖沙咀;香港大會堂|中環;香港體育館（紅館）|紅磡;香港文化中心|尖沙咀;伊利沙伯體育館|灣仔;1881|廣東道;沙田大會堂|源禾路;沙田車公廟|大圍;文武廟|上環;林村許願廣場|大埔;龍躍頭文物徑|粉嶺;美利樓|赤柱;和昌大押|莊士敦道;大館|荷李活道;香港藝術館|尖沙咀;香港藝術中心|灣仔;香港故宮文化博物館|博物館道;戲曲中心|柯士甸道西;M+|博物館道;啟德體育園|承啟道;香港文華東方酒店|中環;美利酒店|中環;香港港麗酒店|金鐘道;香港灣仔帝盛酒店|皇后大道東;港島皇悅酒店|軒尼詩道;六國酒店|灣仔;香港萬麗海景酒店|灣仔;柏寧酒店|銅鑼灣;北角海逸酒店|英皇道;奧華酒店 南岸|黃竹坑;南灣如心酒店|黃竹坑;九龍香格里拉大酒店|尖沙咀;香港半島酒店|尖沙咀;香港W酒店|柯士甸道西;香港麗思卡爾頓酒店|柯士甸道西;帝京酒店|旺角;香港旺角帝盛酒店|大角咀;九龍海逸君綽酒店|紅磡;8度海逸酒店|土瓜灣;香港啟德帝盛酒店|承啟道;九龍東如心酒店|觀塘;九龍東帝苑酒店|將軍澳;麗豪酒店|沙田;荃灣西如心酒店|楊屋道;帝景酒店|汀九;香港黃金海岸酒店|掃管笏;嘉湖海逸酒店|天水圍;諾富特東薈城酒店|東涌;麗豪航天城酒店|赤鱲角;香港富麗敦海洋公園酒店|黃竹坑;皇家太平洋酒店|尖沙咀;香港喜來登酒店|尖沙咀;香港百樂酒店|尖沙咀;香港金域假日酒店|尖沙咀;帝苑酒店|尖沙咀;千禧新世界香港酒店|尖沙咀;海景嘉福洲際酒店|尖沙咀;港威酒店|尖沙咀;美麗華酒店|尖沙咀;香港瑰麗酒店|尖沙咀;馬哥孛羅香港酒店|尖沙咀;香港金普頓酒店|尖沙咀;都會海逸酒店|紅磡;香港迪士尼樂園酒店|竹篙灣;迪士尼探索家度假酒店|竹篙灣;迪士尼好萊塢酒店|竹篙灣;香港天際萬豪酒店|赤鱲角;富豪機場酒店|赤鱲角;政府總部|添美道;金鐘道政府合署|金鐘道;灣仔政府大樓|港灣道;北角政府合署|渣華道;旺角政府合署|聯運街;九龍政府合署|油麻地;西九龍政府合署|海庭道;培正道政府合署|培正道;何文田政府合署|忠孝街;馬頭角道政府合署|馬頭角道;土瓜灣政府合署|馬頭圍道;深水埗政府合署|元州街;長沙灣政府合署|長沙灣道;荔枝角政府合署|荔灣道;東九龍政府合署|觀塘;牛頭角政府合署|安華街;西貢政府合署|親民街;沙田政府合署|上禾輋路;大埔政府合署|汀角路;北區政府合署|粉嶺;荃灣政府合署|西樓角路;葵興政府合署|興芳路;屯門政府合署|屯喜路;大興政府合署|屯門;元朗政府合署|橋樂坊;梅窩政府合署|銀鑛灣路;機電工程署總部大樓|啟成街;入境事務處總部|將軍澳;中區警區總部|中港道;旺角區警署|太子道西;觀塘區警署|鯉魚門道;將軍澳區警署|寶琳北路;荃灣區警署|荃景圍;立法會綜合大樓|金鐘;香港禮賓府|中環;香港中央圖書館|銅鑼灣;醫院管理局大樓|九龍城;終審法院|中環;高等法院|金鐘道;區域法院|港灣道;東區法院大樓|西灣河;西九龍法院大樓|通州街;九龍城法院大樓|亞皆老街;觀塘法院大樓|鯉魚門道;沙田法院大樓|宜正里;粉嶺法院大樓|璧峰路;屯門法院大樓|屯喜路;勞資審裁處|加士居道;土地審裁處|加士居道;小額錢債審裁處|通州街;怡和大廈|中環;永安集團大廈|中環;香港滙豐總行大廈|中環;長江集團中心|中環;環球大廈|中環;中遠大廈|上環;統一中心|金鐘;力寶中心|金鐘;利園|銅鑼灣;友邦廣場|北角;合和中心|灣仔;美麗華廣場|尖沙咀;港威大廈|尖沙咀;企業廣場|九龍灣;創紀之城|觀塘;如心廣場|荃灣;電視廣播城|將軍澳;時代廣場|銅鑼灣;利舞臺|銅鑼灣;海港城|尖沙咀;K11 MUSEA|尖沙咀;朗豪坊|旺角;U Corner|旺角;又一城|達之路;荷里活廣場|鑽石山;黃埔新天地|紅磡;裕民坊|觀塘;The ANGLE|觀塘;AIRSIDE|啟德;雙子匯|啟德;SOHO West|長沙灣;圍方|車公廟路;新城市廣場|沙田;東薈城名店倉|東涌;太古城|鰂魚涌;杏花邨|柴灣;海怡半島|鴨脷洲;貝沙灣|薄扶林;淘大花園|九龍灣;德福花園|九龍灣;麗港城|觀塘;黃埔花園|紅磡;海逸豪園|紅磡;美孚新邨|荔枝角;嘉湖山莊|天水圍;錦綉花園|元朗;綠楊新邨|荃灣;麗城花園|荃灣;盈翠半島|青衣;珀麗灣|馬灣;沙田第一城|沙田;新港城|馬鞍山;逸瓏灣|白石角;東堤灣畔|東涌;映灣園|東涌;愉景灣|大嶼山;香港大學本部大樓|般咸道;香港中文大學|沙田;香港科技大學|清水灣;香港理工大學|紅磡;香港城市大學|九龍塘;香港浸會大學|九龍塘;嶺南大學|屯門;香港教育大學|大埔;香港都會大學|何文田;香港樹仁大學|北角;香港恒生大學|小瀝源;聖方濟各大學|翠嶺里;信和廣場|銅鑼灣;修頓中心|灣仔`.split(";").map(s=>s.split("|"));
+
+// 路線試題（小冊子附表）："起點|目的地|最直接可行路線"
+const ROUTES=`西貢匡湖居|大口環根德公爵夫人兒童醫院|西區海底隧道;紅磡高山劇場|長沙灣廣場|佛光街、梭椏道及亞皆老街;荃灣環宇海灣|米埔自然保護區|大欖隧道及青朗公路;元朗大會堂|馬鞍山新港城中心|林錦公路;荃灣沙咀道遊樂場|沙田中心|大河道及象鼻山道;深水埗南昌邨|港鐵上水站|青沙公路及尖山隧道;佐敦（西九龍站）巴士總站|銅鑼灣皇悅酒店|康莊道及紅磡海底隧道;九龍塘又一城|沙田大會堂|窩打老道及獅子山隧道;西九文化區戲曲中心|九龍灣德福廣場|漆咸道北、東九龍走廊及啟德隧道;上水廣場|入境事務處總部|粉嶺公路及大老山隧道;基督教聯合醫院|旺角區警署|新清水灣道及太子道東;荃灣荃豐中心|新蒲崗香港考試及評核局|青山公路葵涌段及龍翔道;紅磡置富都會|北角廉政公署總部大樓|紅磡海底隧道;九龍塘香港浸會大學大學會堂|灣仔鷹君中心|紅磡海底隧道;九龍公共圖書館|跑馬地馬場|紅磡海底隧道;啟德嘉匯|美孚廣場|中九龍繞道、連翔道及荔枝角道;西九龍政府合署|半山香港佑寧堂|西區海底隧道、干諾道西天橋及紅棉路;曼克頓山|科學園|青沙公路及吐露港公路`.split(";").map(s=>s.split("|"));
+
+// 乙部：按運輸署《道路使用者守則》（二零二零年六月版）出題，三選一。★ 為運輸署公布的示範題。
+const CODE=[
+["★ 駛過水浸的街道後，你應：",["立即試驗煞車系統的性能","閃動車頭燈警告迎面車輛","響號警告尾隨車輛"],"運輸署示範題（守則第87頁）：駛過水浸路面後要小心試煞車掣。"],
+["★ 若豎立「不准停車」標誌的標誌杆為紅色，代表不准停車的時間是：",["上午七時至午夜十二時","上午七時至下午七時","上午七時至十時及下午四時至七時"],"運輸署示範題（守則第91頁）：紅杆 7am–午夜。"],
+["★ 電單車後座（側車固定座位除外），不可以運載少於幾歲的乘客？",["8歲","10歲","12歲"],"運輸署示範題（守則第103頁）。"],
+["「不准停車」標誌杆為黃色，一般代表不准停車的時間是：",["上午七時至下午七時","上午七時至午夜十二時","全日24小時"],"守則「不准停車的地方」：紅杆7am–午夜、黃杆7am–7pm、綠杆8–10am及5–7pm，灰杆其他時段。要以標誌所示時間為準。"],
+["「不准停車」標誌杆為綠色，一般代表不准停車的時間是：",["上午八時至十時及下午五時至七時","上午七時至下午七時","上午七時至午夜十二時"],"綠杆：8am–10am 及 5pm–7pm。"],
+["路邊畫有雙黃線，表示：",["任何時間都不准停車","只在上午七時至下午七時不准停車","只在晚上不准停車"],"雙黃線及／或「不准停車」標誌：任何時間不准停車。"],
+["路邊畫有單黃實線，並設有「不准停車」標誌，表示：",["在標誌所示的時段內不准停車","任何時間不准停車","可以短暫停車上落客"],"單黃實線配標誌：在標誌所示時段內不准停車。"],
+["在快速公路上，正常交通情況下可否停車上落客？",["不可以","可以，只要亮起危險警告燈","可以，在路肩上便可"],"快速公路沒有黃線或標誌，但駛入後在正常交通情況下不准停車。"],
+["除非有車速限制標誌另有指示，香港所有道路的車速限制是：",["每小時50公里","每小時70公里","每小時30公里"],"守則「車速」：除另有標誌外，車速限制為每小時50公里。"],
+["在一般情況下，與前車應保持多少秒的距離？",["兩秒","一秒","半秒"],"守則「車速」：保持兩秒的時間距離；重型車輛要多於兩秒。"],
+["在路面濕滑、有霧或薄霧等惡劣情況下，跟車時間距離應增加至：",["四秒或以上","三秒","兩秒即可"],"惡劣情況下增加至四秒或以上。"],
+["在雨天及路面濕滑時，煞車距離最少應預留平時的多少？",["兩倍","一倍半","不變"],"守則「雨、霧、風」：最少預留平時煞車距離的兩倍。"],
+["駛過水浸路面時，你應：",["盡量慢駛，並保持引擎轉速以免死火","加速盡快駛過","關掉引擎滑行駛過"],"先在安全地方察看水深，決定駛過便盡量慢駛並保持引擎轉速。"],
+["在霧中駕駛，你應：",["減速，確保能在看得見的距離內停車","緊跟前車尾燈行駛","開啟遠光燈"],"不要只盯前車尾燈，會產生虛假安全感；應能在看得見的距離內停車。"],
+["霧燈應在甚麼時候使用？",["只在有霧時，而車輛裝有霧燈","每晚都要開","下雨時代替車頭燈"],"只在車輛裝有霧燈及有霧時才使用霧燈。"],
+["日間遇上大雨、煙霧或濃霧而能見度低，你應：",["開啟車頭燈","只開危險警告燈","不用開燈"],"能見度低時日間亦須開啟車頭燈。"],
+["晚上在有街燈的道路駕駛，你應：",["仍然要開啟車頭燈","可以不開車頭燈","只開泊車燈"],"即使有街燈，晚上亦必須開車頭燈。"],
+["被對面駛來車輛的遠光燈眩目時，你應：",["減速或停車，視線望向道路左邊","以遠光燈回敬","加速駛過"],"不要直望強光，應望向左邊路緣，並減速或停車。"],
+["閃動車頭燈的正確用途是：",["讓其他道路使用者知道你的存在","示意對方先行","表示不滿"],"守則：只可用閃燈讓他人知道你在場，不可作其他用途。"],
+["響號的正確用法是：",["只用作警告危險","交通停頓時催促前車","向其他司機表示不滿"],"只可用作警告危險；在「寧靜區」（通常在醫院附近）不可響號。"],
+["「寧靜區」通常設於甚麼地方附近？",["醫院","學校","商場"],"寧靜區內不可響號，通常在醫院附近。"],
+["聽到緊急車輛響警號或見到閃燈駛近，你應：",["立即靠邊讓路","加速駛走","在原地停車不動"],"立即讓路，不讓路屬違法。"],
+["停車時讓引擎空轉，在任何連續60分鐘內累計不可超過：",["3分鐘","5分鐘","10分鐘"],"任何60分鐘內累計空轉超過3分鐘屬違法（有豁免情況除外）。"],
+["離開車輛（即使只是短時間），你應：",["熄引擎、入一波或P檔，並拉緊手掣","只拉手掣","保持引擎開動"],"守則「在路上」：熄匙、入波／P檔、拉緊手掣。"],
+["倒車時，以下哪一項是錯誤的？",["由支路倒車駛入主要道路","倒車前察看行人及盲點","視線不清時請人指揮"],"切勿由支路倒車駛入主要道路。"],
+["轉線前應依照哪個步驟？",["想、望、打燈、再望（包括回頭察看盲點）","打燈後立即轉線","只看倒後鏡"],"守則：Think, Look, Signal, Look again，並回頭察看盲點。"],
+["香港車輛一般應在甚麼位置超越前車？",["前車的右方","前車的左方","任何一方都可以"],"只可在右方超車。"],
+["在快速公路上從左方超車：",["屬違法","可以，只要安全","可以，在路肩上便可"],"在快速公路從左方超車屬違法。"],
+["被其他車輛超越時，你應：",["不要加速，有需要時減速","加速阻止對方超越","響號警告"],"被超越時不應加速。"],
+["近你一方的雙白線是實線時：",["不可越過或駛在線上","安全時可越過","可越線超車"],"近你一方為實線：不可越過或駛在線上。"],
+["近你一方的雙白線是虛線時：",["安全時可以越過","任何情況都不可越過","可以在線上停車"],"虛線一方安全時可越過，但要在實線出現前完成超車。"],
+["在斑馬線之字線範圍內：",["不可超越最近的行駛中車輛或已停下讓路的前車","可以超車","可以停車上落客"],"之字線範圍內不可超車、停車（讓路或等候轉彎除外）。"],
+["行人在斑馬線旁等候時，你應：",["準備減速或在「讓路」線後停車，但不要揮手示意行人過路","揮手叫行人過路","響號示意行人等候"],"不要揮手示意行人過路，因為可能有其他車輛駛近。"],
+["交通燈是綠燈時，你應：",["確定路口有足夠空間安全駛離才前進","立即前進","響號後前進"],"守則：除非肯定有空間安全駛離路口，否則綠燈亦不應前進。"],
+["交通燈紅燈及黃燈同時亮起時：",["不可前進","可以起步","可慢慢駛過停車線"],"紅燈或紅黃燈同亮時都不可前進。"],
+["黃色方格路口，在甚麼情況下不可駛入？",["出口道路或行車線不暢通","交通燈是綠燈","前面沒有車"],"出口不暢通便不可駛入；在右轉箭咀線因對面來車等候右轉則屬例外。"],
+["交通燈失靈時，你應：",["當作無燈號路口，減速或停車並極度小心前進","照常加速通過","響號後直駛"],"燈號失靈時當作無燈號路口處理。"],
+["駛入迴旋處時：",["必須左轉進入，並讓路給右方已在迴旋處的車輛","可以右轉進入","迴旋處車輛要讓你"],"迴旋處入口必須左轉；讓路給右方已在迴旋處的車輛。"],
+["在迴旋處錯過了出口，你應：",["繼續繞迴旋處直至再到該出口才駛出","立即倒車返回","停車等候"],"繼續兜圈再駛出。"],
+["在迴旋處直駛前行，你應如何打燈？",["駛近時不用打燈，經過你出口的前一個出口後打左燈","駛近時打右燈","全程打左燈"],"直行不用打燈，經過前一個出口後打左燈駛出。"],
+["在快速公路上，正常應在哪條行車線行駛？",["最左的行車線（除超車或往右邊出口外）","最右的行車線","任何行車線"],"《道路交通（快速公路）規例》：靠最左行車線行駛。"],
+["持有暫准駕駛執照的私家車司機，在三條或以上行車線的快速公路上：",["不可使用最右的行車線（往右邊出口除外）","只可使用最右的行車線","沒有限制"],"暫准駕駛執照持有人與中型、重型貨車及巴士一樣受此限制。"],
+["在快速公路錯過了出口，你應：",["駛往下一個出口","在路肩倒車","掉頭返回"],"快速公路不可掉頭或倒車。"],
+["學習駕駛人士的車輛可否駛入快速公路？",["須事先獲運輸署署長書面准許","可以，只要有教車師傅","可以，任何時間"],"學車、公共小巴、引擎少於125cc的車輛等需署長事先書面准許。"],
+["在正常交通情況下，在隧道內行車的車速不可低於：",["每小時25公里","每小時40公里","每小時15公里"],"隧道內正常交通情況下車速不可低於25公里。"],
+["在隧道內，以下哪一項是准許的？",["使用近光燈","使用遠光燈","響號"],"隧道內禁止使用遠光燈及響號。"],
+["在隧道內，你的行車線受阻，旁邊是雙白線，你應：",["不可越過雙白線","越過雙白線繞過障礙","倒車離開"],"隧道內即使行車線受阻也不可越過雙白線。"],
+["車輛在隧道內壞車，你應：",["熄引擎、亮危險警告燈，留在車內扣好安全帶並尋求警方協助","立即下車步行離開","自行在隧道內換胎"],"不要移動車輛；除非有煙或火，否則留在車內等候。"],
+["在車速限制為每小時50公里或以下的道路壞車，紅色警告三角應放在：",["障礙物後約50米、同一邊路","障礙物後約10米","對面行車線"],"守則「警告其他司機」：約50米前，同一邊路，最好同一條線。"],
+["在快速公路或車速限制超過每小時50公里的道路壞車，你應：",["亮危險警告燈，不要在行車道上放警告三角","在行車道上放警告三角","站在車後揮手警告"],"這類道路不要在行車道放置警告三角。"],
+["交通意外中有人受傷，而你在現場未能向警方提供資料，須在多少小時內親身向警務人員或警署報告？",["24小時","48小時","72小時"],"守則「交通意外」：須在意外後24小時內報告。"],
+["交通意外中有人死傷，你可否移動車輛？",["未經警方准許不可移動，救人或滅火等緊急情況除外","可以立即移開","只要拍照便可移開"],"有死傷或嚴重損毀時，未經警方准許不可移動車輛。"],
+["呼氣中酒精的法定限度是每100毫升呼氣含：",["22微克","50微克","67微克"],"呼氣22微克、血液50毫克、尿液67毫克（每100毫升）。"],
+["血液中酒精的法定限度是每100毫升血液含：",["50毫克","22毫克","80毫克"],"血液法定限度50毫克／100毫升。"],
+["尿液中酒精的法定限度是每100毫升尿液含：",["67毫克","50毫克","22毫克"],"尿液法定限度67毫克／100毫升。"],
+["駕駛時手持流動電話：",["車輛移動時不可手持（包括夾在頭與膊頭之間）","慢駛時可以","等交通燈時可以傾長電話"],"車輛移動時不可手持電話或其他電訊器材。"],
+["以下哪類乘客坐私家車時須佩戴安全帶？",["所有座位設有安全帶的乘客","只有前座乘客","只有成年人"],"私家車司機須確保所有乘客佩戴安全帶（如有裝設）。"],
+["在私家車前座的三歲以下兒童，必須：",["使用認可的兒童束縛設備","由成年人抱着","佩戴成人安全帶"],"前座三歲以下兒童須用認可兒童束縛設備。"],
+["兩人可否共用一條安全帶？",["不可以","可以，如其中一人是兒童","可以，短途便可"],"兩人或以上不可同時共用一條安全帶。"],
+["前座乘客的身體與儀錶板之間應保持至少多少距離？",["0.25米","0.1米","0.5米"],"守則「駕駛」：最少0.25米。"],
+["計算載客人數時，三歲以下的兒童：",["不計算在內","當一人計","當半人計"],"三歲以下不計；三名三歲或以上而身高不足1.3米的兒童當兩名乘客計。"],
+["申領駕駛執照的最低年齡是：",["18歲","17歲","21歲"],"最低年齡18歲，駕駛時須攜帶有效駕駛執照。"],
+["駕駛人士的視力須在日光下能看清多少米外的車牌？",["23米","15米","30米"],"須能在良好日光下讀出23米外的車牌。"],
+["巴士線運作時間以外：",["所有車輛都可以使用","仍然只限巴士使用","只限的士使用"],"運作時段以外所有車輛可以使用巴士線。"],
+["在路口轉左時，可否越過巴士線？",["可以，在路面標記顯示開放轉彎的位置","任何情況都不可以","只限晚上"],"路面標記顯示的位置可越過巴士線轉左。"],
+["超越長型車輛後，應在甚麼時候駛回原線？",["在倒後鏡看到該車的車頭時","立即駛回","超越一個車位後"],"超越長車後，要在倒後鏡見到其車頭才駛回。"],
+["在有街燈、而街燈相距不超過200米的道路上，你只可以在哪裏泊車？",["劃定的泊車位","任何路邊","行人路旁"],"守則「不准泊車的地方」。"],
+["沒有「讓路」標誌時，從支路或出入口駛出的車輛應：",["讓路給主要道路上的車輛","主要道路車輛讓支路車","先到先行"],"支路車輛讓主路車輛；右轉車輛讓對面直行車輛。"],
+["輕便鐵路的「只准輕鐵行駛」範圍，其他車輛可否駛入？",["不可以","可以，如沒有輕鐵","可以，只限轉彎"],"其他車輛及行人不可進入只准輕鐵行駛的範圍。"],
+["圓形的交通標誌表示：",["命令（限制標誌）","警告","提示"],"守則第八章：圓形表示命令，三角形表示警告，長方形主要提供指示或提示。"],
+["三角形的交通標誌表示：",["警告","命令","提示"],"三角形表示警告，多為尖端向上。"],
+["長方形的交通標誌主要用作：",["提供指示或提示","發出命令","禁止某種行動"],"長方形標誌主要提供路線及設施等指示或提示。"],
+["禁制標誌通常髹上：",["紅邊","藍色","綠色"],"禁制標誌通常髹上紅邊；強制標誌通常是藍色。"],
+["強制標誌（必須依指示行事）通常是：",["藍色","紅邊","黃色"],"強制標誌通常是藍色。"],
+["八角形的交通標誌是：",["「停車」標誌","「讓路」標誌","「不准停車」標誌"],"為了突出，「停車」標誌是八角形，「讓路」標誌是倒置三角形。"],
+["倒置三角形的交通標誌是：",["「讓路」標誌","「停車」標誌","警告標誌"],"倒置三角形是「讓路」標誌。"],
+["快速公路上的方向標誌底色是：",["綠色","藍色","白色"],"快速公路方向標誌用綠色底；一般方向標誌藍色底；區內目的地標誌白色底。"],
+["改道標誌和臨時方向標誌的底色是：",["黃色","綠色","藍色"],"臨時路線及改道標誌採用黃色底色。"],
+["「必須停車綫」告示牌表示距離前方「停車」線多遠？",["100米","50米","200米"],"「必須停車綫」100米；「必須讓路綫」50米。設於視程不足的路口前。"],
+["「必須讓路綫」告示牌表示距離前方「讓路」線多遠？",["50米","100米","30米"],"「必須讓路綫」告示牌：前方50米。"],
+["在設有「停車」標誌的路口，如大路上沒有其他車輛，你應：",["仍須在「停車」線前停車","可以減速駛過","響號後駛過"],"即使大路上沒有車，仍須在停車線前停車。"],
+["紅色燈號交替閃動，表示：",["所有駛近的車輛必須停下","小心慢駛","可以前進"],"紅燈交替閃動設於消防局出口等地方，所有車輛必須停下。"],
+["紅燈亮着，但旁邊的綠色箭嘴亮起，你應：",["在安全情況下按箭嘴方向行駛","繼續停車等綠燈","任何方向都可以行駛"],"紅燈時亮起綠色箭嘴，可在安全下按箭嘴方向行駛。"],
+["全綠燈亮起而右轉箭嘴熄滅時，右轉車輛應：",["駛至右轉袋口位等候，待對面來車有安全空隙才右轉","立即右轉","停在停車線後等箭嘴"],"右轉箭嘴熄滅表示對面仍有直行車，要讓路。"],
+["車輛已駛離「停車」線後，燈號轉紅，你應：",["無須理會剛才的燈號，繼續小心前進","立即停在路口中間","倒車返回停車線"],"駛離停車線後無須再理會剛才燈號，但要繼續小心前進。"],
+["主要交通燈失靈時，如輔助交通燈正常，你應：",["遵守輔助交通燈","當作無燈號路口","不理會任何燈號"],"輔助交通燈的指示與主要交通燈無異。"],
+["隧道或快速公路的行車線信號黃燈閃動，表示：",["前方有危險，須小心駕駛並準備停車","可以加速","該線封閉"],"黃燈閃動：前方有危險，如交通意外或天氣惡劣。"],
+["行車線信號顯示紅色交叉，表示：",["切勿使用該信號以後的行車線","可小心駛入","只限巴士使用"],"紅色交叉燈：不可使用該行車線。"],
+["行車線信號顯示綠色斜箭嘴，你應：",["在安全情況下轉往箭嘴所示的行車線","立即突然轉線","停車等候"],"切勿突然轉換行車線，要在安全情況下才換線。"],
+["「受風車輛不准駛入」信號適用於：",["整體高度超過1.6米的車輛、電單車及機動三輪車","所有私家車","只限貨車"],"受風車輛：高度超過1.6米車輛、電單車及機動三輪車。"],
+["緊急車輛會用甚麼信號示意優先通行？",["雙音響號、警號，或閃動白、紅或藍色燈","黃色閃燈","連續響號三次"],"遇此情況必須讓路並設法開路。"],
+["警務人員在路口截停你的車輛，你可否轉左或轉右？",["除非獲得指示，否則不可","可以，只要安全","可以轉左但不可轉右"],"警務人員或交通督導員截停車輛時，未獲指示不得轉彎。"],
+["車尾的紅色停車燈亮起，表示該車：",["正在慢駛或停車","準備轉右","正在倒車"],"踏下剎車掣時停車燈亮起，不可與紅色後燈混淆。"],
+["你發出的信號可以用來：",["只表明你自己的意向","指示其他道路使用者應如何做","代替讓路"],"信號只可表明自己的意向，不可用來指示他人。"],
+["有效的行車證應貼在：",["擋風玻璃左方","擋風玻璃右方","車尾玻璃"],"須將有效行車證貼於擋風玻璃左方。"],
+["可否同時混用交叉紋和徑向紋輪胎？",["不可以","可以，只要胎紋足夠","可以，前後不同便可"],"守則「安全檢查」：不可混用交叉紋與徑向紋輪胎。"],
+["油箱蓋開啟時，你應：",["絕對不可啟動引擎或讓引擎運轉","可以啟動引擎","只可開冷氣"],"油箱蓋開啟時不可啟動引擎。"],
+["使用輔助駕駛系統時，你應：",["仍須留意路況並保持雙手握住軚盤","可以放手","可以使用電話"],"使用期間仍須雙手握軚盤，隨時改由人手操控。"],
+["三歲或以上但未滿15歲的乘客，在設有安全帶的座位上：",["必須佩戴安全帶或束縛設備","可以不佩戴","只有前座才須佩戴"],"守則第九章：3歲或以上但15歲以下的前座或後座乘客必須佩戴。"],
+["幾歲以上（或體重超過36公斤）的兒童可使用普通安全帶？",["12歲","8歲","10歲"],"12歲以上或體重超過36公斤可用普通安全帶。"],
+["使用背向後仰式嬰孩安全裝置的幼童：",["不可置於前排設有氣袋的座位","應坐前排","可由成年人抱着"],"氣袋彈出會傷及幼童，幼童應坐後座。"],
+["前座乘客可否抱着兒童乘車？",["不可以","可以，如兒童未滿3歲","可以，短途便可"],"前座乘客切勿抱着兒童或讓他們坐在膝上。"],
+["接載兒童時，上落車的次序應是：",["兒童最先上車、最後下車","兒童最後上車、最先下車","沒有規定"],"守則第九章：讓兒童最先上車和最後下車。"],
+["沒有成年人看管，幾歲以下的兒童不可在道路上騎單車？",["11歲","8歲","15歲"],"沒有成年人看管，不可讓11歲以下兒童在道路上騎單車。"],
+["在有路邊石的上坡斜路泊車，軚盤應扭向：",["右邊","左邊","保持正直"],"上坡有路邊石：軚盤扭向右，入一波或泊車波，啟動手掣。"],
+["在有路邊石的下坡斜路泊車，軚盤應扭向：",["左邊","右邊","保持正直"],"下坡有路邊石：軚盤扭向左，入後波或泊車波。"],
+["在沒有路邊石的斜路泊車，軚盤應扭向：",["左邊","右邊","保持正直"],"沒有路邊石，不論上坡或下坡，軚盤都扭向左邊。"],
+["在窄路上，讓車處在你的右方，迎面有車駛近，你應：",["在讓車處對面暫停等候","駛入右方讓車處","響號要對方讓路"],"讓車處在左方可駛入；在右方則在對面暫停等候。"],
+["在窄斜路上，一般應盡可能讓路給：",["上斜的車輛","下斜的車輛","較細的車輛"],"盡可能讓路給上斜的車輛。"],
+["可否在讓車處泊車？",["不可以","可以，短時間便可","晚上可以"],"切勿在讓車處停泊車輛。"],
+["斜路警告標誌上，以下哪個坡度最陡峭？",["1：5","1：10","1：20"],"比率越大傾斜度越大：1：5即20%，比1：10（10%）陡峭。"],
+["落長斜路時，你應：",["選擇並維持低速檔，輕踏腳掣調節速度","只靠腳掣減速","入空波滑行"],"除短程外，不應只依賴腳掣減速。"],
+["在三線分隔車路上，最右線應用作：",["超車（或準備右轉、駛離往某目的地）","一般行車","慢車專用"],"右線只供超車，超車後先回中線再盡快回左線。"],
+["在分隔車路上錯過了要駛出的路口，你應：",["繼續前行至下一個路口","倒車返回","橫越中央分隔帶掉頭"],"分隔車路上不可倒車、轉向、橫越中央分隔帶或逆向行駛。"],
+["「警告線」與「車路分界線」的分別是：",["警告線線段較長、間距較短，表示前方有危險","警告線是雙實線","警告線只在晚上生效"],"車路分界線線段短、間距長；警告線線段長、間距短，只可在前路暢通時越過。"],
+["路面上的白色斜線範圍：",["不可駛越或駛入","可用作超車","可用作停車"],"白色斜線範圍屬危險警告地帶。"],
+["道路中央的安全島設有「靠左行駛」標誌，你應：",["從安全島左側駛過","從右側駛過","任何一側均可"],"須從安全島左側駛過。"],
+["紅色反光路釘標明：",["車道左邊緣","行車線界線","路口位置"],"白色：行車線或路中央；紅色：左邊緣；琥珀色：近中央分隔帶右邊緣；綠色：路口、停車處或讓車處。"],
+["琥珀色反光路釘標明：",["車道右側近中央分隔帶的邊緣","車道左邊緣","行車線界線"],"琥珀色：右側近中央分隔帶的邊緣。"],
+["綠色反光路釘設於：",["路口、路旁停車處或讓車處的車道邊緣","行車線中央","中央分隔帶"],"綠色路釘標明可駛離車道的位置。"],
+["路面上的黃色橫條是預先警告甚麼？",["前方有支路出口、迴旋處或收費廣場，應減慢車速","前面是巴士線","前面不准停車"],"黃色橫條提醒你減慢車速。"],
+["車速較高的道路，車速限制可能是每小時：",["70、80、100或110公里","60、90或120公里","只有70公里"],"守則：可能為70、80、100或110公里。"],
+["看見「開始減速」標誌，你應：",["開始減速，以安全駛過前方危險地點","保持車速","加速"],"見到此標誌須開始減速。"],
+["一看到道路工程的警告指示，你應：",["立即減速","保持車速","響號警告工人"],"守則「道路工程」：一旦看到警告指示，就應立即減速。"],
+["道路工程的臨時交通燈亮紅燈，你應：",["停車，並在標誌前等候","慢慢駛過","響號示意工人讓路"],"臨時交通燈紅燈或紅黃燈同亮，須在標誌前停車等候。"],
+["見到人手操作的「停」字標誌，你應：",["停車，切勿駛越","慢駛通過","響號後通過"],"「停」字標誌切勿駛越；「去」字標誌要前路暢通才可前駛。"],
+["沒有安全島的電車站，有電車停站時，你應：",["在黃色「停車」線前停下，讓乘客上落","從電車左邊駛過","響號提醒乘客"],"乘客上落完畢後才可開車，仍要小心趕車的行人。"],
+["駕駛人可否駛入電車線？",["不可以","可以，如沒有電車","可以，只限轉彎"],"不可駛入電車線，盡量讓路給電車。"],
+["學校交通安全隊示意車輛通過，但仍有行人正在過馬路，你應：",["仍須讓路給行人","可以前進","響號示意"],"即使交通安全隊放行，仍須讓路給正在過路的行人。"],
+["接送學童時，你應把車停在：",["離學校稍遠的安全地方","校門前","校門對面"],"切勿在學校門前、遊樂場出入口或校門對面泊車或停候。"],
+["帶領動物的人要求你停車，你應：",["必須停車","響號後慢駛","繞過動物"],"不可用響號或踩油驚嚇動物。"],
+["在「綠色人像」過路處，綠燈亮起時：",["如沒有行人且前路暢通可以駛前，但不可堵塞過路處","必須停車","可以停在過路處上等候"],"不得在行人過路處上停車。"],
+["在行人過路處等候時，以下哪種行為不恰當？",["「踏空油」或讓車輛慢慢向前逼近行人","耐心等候","讓長者有充分時間過路"],"不應做出令行人不安的舉動。"],
+["在「行人優先使用區」內，你須：",["讓路給行車道上的行人","響號要行人讓路","維持正常車速"],"行人優先區內要讓路，包括手推車及遊行隊伍。"],
+["公共小型巴士的最高車速是每小時：",["80公里","70公里","100公里"],"巴士及中、重型貨車最高時速70公里；公共小巴80公里。"],
+["的士站標誌下設有「的士站時間字牌」，表示：",["所示時間為的士站，其他時間准許的士泊車","全日只准的士停車","其他時間所有車輛可停"],"的士站時間字牌：所示時間為的士站，其他時間則准許的士泊車。"],
+["駛近交通燈前，路面上「停車」線的作用是：",["紅燈時須在此線前停車","表示前面有學校","表示不准超車"],"紅燈須在停車線前停車；紅黃燈同亮仍須停車。"],
+["乘客可否在的士未完全停下時付車費給司機？",["不可以","可以，節省時間","可以，在交通燈前"],"守則第三章：不可在車輛未完全停下時直接付車費給司機。"],
+];
+
+// 運輸署筆試指引內的路線示範題（固定選項）
+const ROUTES_OFFICIAL=[
+["西灣河嘉亨灣","旺角拔萃男書院","經告士打道、紅磡海底隧道及公主道",["經東區海底隧道、觀塘道、龍翔道及竹園道","經中環及灣仔繞道、干諾道中、西區海底隧道、西九龍公路及麗翔道"]],
+["荃灣悅來酒店","上環港澳碼頭","經青葵公路、西九龍公路及西區海底隧道",["經青衣南橋、昂船洲大橋、青沙公路、西九龍公路及西區海底隧道","經龍翔道、竹園道、窩打老道、公主道、紅磡海底隧道及告士打道"]],
+];
+
+const SIGNS=[["不准停車", "<svg viewBox=\"0 0 100 100\" role=\"img\"><circle cx=\"50\" cy=\"50\" r=\"43\" fill=\"#1f5fa8\" stroke=\"#c8102e\" stroke-width=\"11\"/><path d=\"M22 22 L78 78 M78 22 L22 78\" stroke=\"#c8102e\" stroke-width=\"9\"/></svg>"], ["不准泊車", "<svg viewBox=\"0 0 100 100\" role=\"img\"><circle cx=\"50\" cy=\"50\" r=\"43\" fill=\"#1f5fa8\" stroke=\"#c8102e\" stroke-width=\"11\"/><line x1=\"22\" y1=\"22\" x2=\"78\" y2=\"78\" stroke=\"#c8102e\" stroke-width=\"9\"/></svg>"], ["所有車輛不准駛入", "<svg viewBox=\"0 0 100 100\" role=\"img\"><circle cx=\"50\" cy=\"50\" r=\"47\" fill=\"#c8102e\"/><rect x=\"18\" y=\"41\" width=\"64\" height=\"18\" fill=\"#fff\"/></svg>"], ["禁止一切車輛駛入（按輔助字牌）", "<svg viewBox=\"0 0 100 100\" role=\"img\"><circle cx=\"50\" cy=\"50\" r=\"43\" fill=\"#fff\" stroke=\"#c8102e\" stroke-width=\"11\"/></svg>"], ["速度限制（每小時 50 公里）", "<svg viewBox=\"0 0 100 100\" role=\"img\"><circle cx=\"50\" cy=\"50\" r=\"43\" fill=\"#fff\" stroke=\"#c8102e\" stroke-width=\"11\"/><text x=\"50\" y=\"63\" text-anchor=\"middle\" font-size=\"36\" font-weight=\"800\" fill=\"#111\">50</text></svg>"], ["禁止汽車駛入", "<svg viewBox=\"0 0 100 100\" role=\"img\"><circle cx=\"50\" cy=\"50\" r=\"43\" fill=\"#fff\" stroke=\"#c8102e\" stroke-width=\"11\"/><g transform=\"translate(22 22) scale(0.56)\"><path d=\"M18 60 L26 42 H74 L82 60 V72 H18 Z\" fill=\"#111\"/><rect x=\"30\" y=\"46\" width=\"40\" height=\"10\" fill=\"#fff\"/><circle cx=\"32\" cy=\"74\" r=\"7\" fill=\"#111\"/><circle cx=\"68\" cy=\"74\" r=\"7\" fill=\"#111\"/></g></svg>"], ["禁止貨車駛入", "<svg viewBox=\"0 0 100 100\" role=\"img\"><circle cx=\"50\" cy=\"50\" r=\"43\" fill=\"#fff\" stroke=\"#c8102e\" stroke-width=\"11\"/><g transform=\"translate(22 22) scale(0.56)\"><rect x=\"14\" y=\"34\" width=\"46\" height=\"34\" fill=\"#111\"/><path d=\"M60 46 H76 L86 58 V68 H60 Z\" fill=\"#111\"/><circle cx=\"28\" cy=\"72\" r=\"7\" fill=\"#111\"/><circle cx=\"74\" cy=\"72\" r=\"7\" fill=\"#111\"/></g></svg>"], ["禁止電單車駛入", "<svg viewBox=\"0 0 100 100\" role=\"img\"><circle cx=\"50\" cy=\"50\" r=\"43\" fill=\"#fff\" stroke=\"#c8102e\" stroke-width=\"11\"/><g transform=\"translate(22 22) scale(0.56)\"><circle cx=\"28\" cy=\"66\" r=\"11\" fill=\"none\" stroke=\"#111\" stroke-width=\"5\"/><circle cx=\"74\" cy=\"66\" r=\"11\" fill=\"none\" stroke=\"#111\" stroke-width=\"5\"/><path d=\"M28 66 L46 48 H62 L74 66 M54 48 L50 36 H40\" fill=\"none\" stroke=\"#111\" stroke-width=\"6\" stroke-linecap=\"round\"/></g></svg>"], ["不准左轉", "<svg viewBox=\"0 0 100 100\" role=\"img\"><circle cx=\"50\" cy=\"50\" r=\"43\" fill=\"#fff\" stroke=\"#c8102e\" stroke-width=\"11\"/><g transform=\"translate(20 20) scale(0.6)\"><path d=\"M62 86 V50 Q62 40 52 40 H38 V28 L16 46 L38 64 V52 H50 V86 Z\" fill=\"#111\"/></g><line x1=\"24\" y1=\"24\" x2=\"76\" y2=\"76\" stroke=\"#c8102e\" stroke-width=\"9\"/></svg>"], ["不准右轉", "<svg viewBox=\"0 0 100 100\" role=\"img\"><circle cx=\"50\" cy=\"50\" r=\"43\" fill=\"#fff\" stroke=\"#c8102e\" stroke-width=\"11\"/><g transform=\"translate(20 20) scale(0.6)\"><path d=\"M38 86 V50 Q38 40 48 40 H62 V28 L84 46 L62 64 V52 H50 V86 Z\" fill=\"#111\"/></g><line x1=\"24\" y1=\"24\" x2=\"76\" y2=\"76\" stroke=\"#c8102e\" stroke-width=\"9\"/></svg>"], ["不准掉頭", "<svg viewBox=\"0 0 100 100\" role=\"img\"><circle cx=\"50\" cy=\"50\" r=\"43\" fill=\"#fff\" stroke=\"#c8102e\" stroke-width=\"11\"/><g transform=\"translate(20 20) scale(0.6)\"><path d=\"M64 86 V40 Q64 22 48 22 Q32 22 32 40 V56 H20 L38 78 L56 56 H44 V40 Q44 34 48 34 Q52 34 52 40 V86 Z\" fill=\"#111\"/></g><line x1=\"24\" y1=\"24\" x2=\"76\" y2=\"76\" stroke=\"#c8102e\" stroke-width=\"9\"/></svg>"], ["不准超車", "<svg viewBox=\"0 0 100 100\" role=\"img\"><circle cx=\"50\" cy=\"50\" r=\"43\" fill=\"#fff\" stroke=\"#c8102e\" stroke-width=\"11\"/><g transform=\"translate(18 26) scale(0.64)\"><g transform=\"translate(-14 4) scale(0.62)\"><path d=\"M18 60 L26 42 H74 L82 60 V72 H18 Z\" fill=\"#111\"/><rect x=\"30\" y=\"46\" width=\"40\" height=\"10\" fill=\"#fff\"/><circle cx=\"32\" cy=\"74\" r=\"7\" fill=\"#111\"/><circle cx=\"68\" cy=\"74\" r=\"7\" fill=\"#111\"/></g><g transform=\"translate(46 4) scale(0.62)\"><path d=\"M18 60 L26 42 H74 L82 60 V72 H18 Z\" fill=\"#c8102e\"/><rect x=\"30\" y=\"46\" width=\"40\" height=\"10\" fill=\"#fff\"/><circle cx=\"32\" cy=\"74\" r=\"7\" fill=\"#c8102e\"/><circle cx=\"68\" cy=\"74\" r=\"7\" fill=\"#c8102e\"/></g></g></svg>"], ["禁止響號", "<svg viewBox=\"0 0 100 100\" role=\"img\"><circle cx=\"50\" cy=\"50\" r=\"43\" fill=\"#fff\" stroke=\"#c8102e\" stroke-width=\"11\"/><g transform=\"translate(22 22) scale(0.56)\"><path d=\"M22 42 H38 L66 24 V76 L38 58 H22 Z\" fill=\"#111\"/></g><line x1=\"24\" y1=\"24\" x2=\"76\" y2=\"76\" stroke=\"#c8102e\" stroke-width=\"9\"/></svg>"], ["禁止超過所示高度的車輛駛入", "<svg viewBox=\"0 0 100 100\" role=\"img\"><circle cx=\"50\" cy=\"50\" r=\"43\" fill=\"#fff\" stroke=\"#c8102e\" stroke-width=\"11\"/><g transform=\"translate(22 22) scale(0.56)\"><text x=\"50\" y=\"62\" text-anchor=\"middle\" font-size=\"30\" font-weight=\"800\" fill=\"#111\">4.5m</text><path d=\"M40 10 H60 L50 24 Z M40 90 H60 L50 76 Z\" fill=\"#111\"/></g></svg>"], ["行人止步", "<svg viewBox=\"0 0 100 100\" role=\"img\"><circle cx=\"50\" cy=\"50\" r=\"43\" fill=\"#fff\" stroke=\"#c8102e\" stroke-width=\"11\"/><g transform=\"translate(24 22) scale(0.52)\"><circle cx=\"52\" cy=\"18\" r=\"8\" fill=\"#111\"/><path d=\"M52 28 L46 56 L34 86 M48 50 L64 86 M50 34 L30 48 M52 34 L70 46\" stroke=\"#111\" stroke-width=\"8\" stroke-linecap=\"round\" fill=\"none\"/></g><line x1=\"24\" y1=\"24\" x2=\"76\" y2=\"76\" stroke=\"#c8102e\" stroke-width=\"9\"/></svg>"], ["只准向前駛", "<svg viewBox=\"0 0 100 100\" role=\"img\"><circle cx=\"50\" cy=\"50\" r=\"47\" fill=\"#1f5fa8\"/><path d=\"M50 16 L72 44 H58 V84 H42 V44 H28 Z\" fill=\"#fff\"/></svg>"], ["只准左轉", "<svg viewBox=\"0 0 100 100\" role=\"img\"><circle cx=\"50\" cy=\"50\" r=\"47\" fill=\"#1f5fa8\"/><g transform=\"translate(10 6) scale(0.85)\"><path d=\"M62 86 V50 Q62 40 52 40 H38 V28 L16 46 L38 64 V52 H50 V86 Z\" fill=\"#fff\"/></g></svg>"], ["只准右轉", "<svg viewBox=\"0 0 100 100\" role=\"img\"><circle cx=\"50\" cy=\"50\" r=\"47\" fill=\"#1f5fa8\"/><g transform=\"translate(5 6) scale(0.85)\"><path d=\"M38 86 V50 Q38 40 48 40 H62 V28 L84 46 L62 64 V52 H50 V86 Z\" fill=\"#fff\"/></g></svg>"], ["靠左行駛", "<svg viewBox=\"0 0 100 100\" role=\"img\"><circle cx=\"50\" cy=\"50\" r=\"47\" fill=\"#1f5fa8\"/><path d=\"M74 24 L40 58 L40 44 L26 44 L26 78 L60 78 L60 64 L46 64 L80 30 Z\" fill=\"#fff\"/></svg>"], ["單車或三輪車徑（禁止汽車駛入）", "<svg viewBox=\"0 0 100 100\" role=\"img\"><circle cx=\"50\" cy=\"50\" r=\"47\" fill=\"#1f5fa8\"/><g transform=\"translate(16 16) scale(0.68)\"><circle cx=\"26\" cy=\"68\" r=\"15\" fill=\"none\" stroke=\"#fff\" stroke-width=\"6\"/><circle cx=\"76\" cy=\"68\" r=\"15\" fill=\"none\" stroke=\"#fff\" stroke-width=\"6\"/><path d=\"M26 68 L44 40 H68 L76 68 M50 68 L44 40 M66 32 H76\" fill=\"none\" stroke=\"#fff\" stroke-width=\"6\" stroke-linejoin=\"round\"/></g></svg>"], ["停車並讓路（八角形）", "<svg viewBox=\"0 0 100 100\" role=\"img\"><path d=\"M31 4 H69 L96 31 V69 L69 96 H31 L4 69 V31 Z\" fill=\"#c8102e\"/><path d=\"M33 10 H67 L90 33 V67 L67 90 H33 L10 67 V33 Z\" fill=\"none\" stroke=\"#fff\" stroke-width=\"3\"/><text x=\"50\" y=\"64\" text-anchor=\"middle\" font-size=\"38\" font-weight=\"900\" fill=\"#fff\">停</text></svg>"], ["讓路予大路車輛（倒轉三角形）", "<svg viewBox=\"0 0 100 100\" role=\"img\"><path d=\"M6 12 H94 L50 92 Z\" fill=\"#fff\" stroke=\"#c8102e\" stroke-width=\"9\" stroke-linejoin=\"round\"/><text x=\"50\" y=\"50\" text-anchor=\"middle\" font-size=\"26\" font-weight=\"900\" fill=\"#111\">讓</text></svg>"], ["前面有迴旋處", "<svg viewBox=\"0 0 100 100\" role=\"img\"><path d=\"M50 7 L95 89 H5 Z\" fill=\"#fff\" stroke=\"#c8102e\" stroke-width=\"8\" stroke-linejoin=\"round\"/><g transform=\"translate(25 38) scale(0.5)\"><g fill=\"#111\"><path d=\"M50 14 A36 36 0 0 1 84 44 L94 44 L78 62 L62 44 L72 44 A24 24 0 0 0 50 26 Z\"/><path d=\"M50 14 A36 36 0 0 1 84 44 L94 44 L78 62 L62 44 L72 44 A24 24 0 0 0 50 26 Z\" transform=\"rotate(120 50 50)\"/><path d=\"M50 14 A36 36 0 0 1 84 44 L94 44 L78 62 L62 44 L72 44 A24 24 0 0 0 50 26 Z\" transform=\"rotate(240 50 50)\"/></g></g></svg>"], ["前面有交通燈號", "<svg viewBox=\"0 0 100 100\" role=\"img\"><path d=\"M50 7 L95 89 H5 Z\" fill=\"#fff\" stroke=\"#c8102e\" stroke-width=\"8\" stroke-linejoin=\"round\"/><g transform=\"translate(25 38) scale(0.5)\"><rect x=\"34\" y=\"8\" width=\"32\" height=\"84\" rx=\"6\" fill=\"#111\"/><circle cx=\"50\" cy=\"26\" r=\"9\" fill=\"#e5262f\"/><circle cx=\"50\" cy=\"50\" r=\"9\" fill=\"#f4b400\"/><circle cx=\"50\" cy=\"74\" r=\"9\" fill=\"#1fa34a\"/></g></svg>"], ["前面有行人過路處", "<svg viewBox=\"0 0 100 100\" role=\"img\"><path d=\"M50 7 L95 89 H5 Z\" fill=\"#fff\" stroke=\"#c8102e\" stroke-width=\"8\" stroke-linejoin=\"round\"/><g transform=\"translate(25 38) scale(0.5)\"><circle cx=\"52\" cy=\"18\" r=\"8\" fill=\"#111\"/><path d=\"M52 28 L46 56 L34 86 M48 50 L64 86 M50 34 L30 48 M52 34 L70 46\" stroke=\"#111\" stroke-width=\"8\" stroke-linecap=\"round\" fill=\"none\"/></g></svg>"], ["前面有兒童（學校）", "<svg viewBox=\"0 0 100 100\" role=\"img\"><path d=\"M50 7 L95 89 H5 Z\" fill=\"#fff\" stroke=\"#c8102e\" stroke-width=\"8\" stroke-linejoin=\"round\"/><g transform=\"translate(25 38) scale(0.5)\"><g transform=\"translate(-14 10) scale(0.85)\"><circle cx=\"52\" cy=\"18\" r=\"8\" fill=\"#111\"/><path d=\"M52 28 L46 56 L34 86 M48 50 L64 86 M50 34 L30 48 M52 34 L70 46\" stroke=\"#111\" stroke-width=\"8\" stroke-linecap=\"round\" fill=\"none\"/></g><g transform=\"translate(26 22) scale(0.72)\"><circle cx=\"52\" cy=\"18\" r=\"8\" fill=\"#111\"/><path d=\"M52 28 L46 56 L34 86 M48 50 L64 86 M50 34 L30 48 M52 34 L70 46\" stroke=\"#111\" stroke-width=\"8\" stroke-linecap=\"round\" fill=\"none\"/></g></g></svg>"], ["前面左彎", "<svg viewBox=\"0 0 100 100\" role=\"img\"><path d=\"M50 7 L95 89 H5 Z\" fill=\"#fff\" stroke=\"#c8102e\" stroke-width=\"8\" stroke-linejoin=\"round\"/><g transform=\"translate(25 38) scale(0.5)\"><path d=\"M60 92 V54 Q60 30 36 26 L36 14 L14 32 L36 50 L36 40 Q46 42 46 56 V92 Z\" fill=\"#111\"/></g></svg>"], ["前面先右轉的連續彎路", "<svg viewBox=\"0 0 100 100\" role=\"img\"><path d=\"M50 7 L95 89 H5 Z\" fill=\"#fff\" stroke=\"#c8102e\" stroke-width=\"8\" stroke-linejoin=\"round\"/><g transform=\"translate(25 38) scale(0.5)\"><path d=\"M46 92 V70 Q46 58 60 52 Q74 46 74 34 V26 H84 L66 6 L48 26 H58 V34 Q58 40 48 44 Q30 52 30 70 V92 Z\" fill=\"#111\"/></g></svg>"], ["前面道路右邊收窄", "<svg viewBox=\"0 0 100 100\" role=\"img\"><path d=\"M50 7 L95 89 H5 Z\" fill=\"#fff\" stroke=\"#c8102e\" stroke-width=\"8\" stroke-linejoin=\"round\"/><g transform=\"translate(25 38) scale(0.5)\"><path d=\"M24 92 V8 H38 V92 Z M62 92 V60 L76 36 V8 H90 V40 L76 64 V92 Z\" fill=\"#111\"/></g></svg>"], ["前面道路兩邊收窄", "<svg viewBox=\"0 0 100 100\" role=\"img\"><path d=\"M50 7 L95 89 H5 Z\" fill=\"#fff\" stroke=\"#c8102e\" stroke-width=\"8\" stroke-linejoin=\"round\"/><g transform=\"translate(25 38) scale(0.5)\"><path d=\"M14 92 V64 L30 40 V8 H44 V92 Z M86 92 V64 L70 40 V8 H56 V92 Z\" fill=\"#111\"/></g></svg>"], ["前面有十字路口", "<svg viewBox=\"0 0 100 100\" role=\"img\"><path d=\"M50 7 L95 89 H5 Z\" fill=\"#fff\" stroke=\"#c8102e\" stroke-width=\"8\" stroke-linejoin=\"round\"/><g transform=\"translate(25 38) scale(0.5)\"><path d=\"M42 8 H58 V42 H92 V58 H58 V92 H42 V58 H8 V42 H42 Z\" fill=\"#111\"/></g></svg>"], ["前面有T型路口", "<svg viewBox=\"0 0 100 100\" role=\"img\"><path d=\"M50 7 L95 89 H5 Z\" fill=\"#fff\" stroke=\"#c8102e\" stroke-width=\"8\" stroke-linejoin=\"round\"/><g transform=\"translate(25 38) scale(0.5)\"><path d=\"M8 20 H92 V36 H58 V92 H42 V36 H8 Z\" fill=\"#111\"/></g></svg>"], ["前面有向下斜路", "<svg viewBox=\"0 0 100 100\" role=\"img\"><path d=\"M50 7 L95 89 H5 Z\" fill=\"#fff\" stroke=\"#c8102e\" stroke-width=\"8\" stroke-linejoin=\"round\"/><g transform=\"translate(25 38) scale(0.5)\"><path d=\"M6 30 L94 80 H6 Z\" fill=\"#111\"/><text x=\"54\" y=\"26\" font-size=\"20\" font-weight=\"700\" fill=\"#111\">10%</text></g></svg>"], ["前面有向上斜路", "<svg viewBox=\"0 0 100 100\" role=\"img\"><path d=\"M50 7 L95 89 H5 Z\" fill=\"#fff\" stroke=\"#c8102e\" stroke-width=\"8\" stroke-linejoin=\"round\"/><g transform=\"translate(25 38) scale(0.5)\"><path d=\"M6 80 L94 30 V80 Z\" fill=\"#111\"/><text x=\"6\" y=\"26\" font-size=\"20\" font-weight=\"700\" fill=\"#111\">10%</text></g></svg>"], ["前面路面不平", "<svg viewBox=\"0 0 100 100\" role=\"img\"><path d=\"M50 7 L95 89 H5 Z\" fill=\"#fff\" stroke=\"#c8102e\" stroke-width=\"8\" stroke-linejoin=\"round\"/><g transform=\"translate(25 38) scale(0.5)\"><path d=\"M6 80 Q22 50 38 80 Q54 50 70 80 Q82 60 94 80 Z\" fill=\"#111\"/></g></svg>"], ["前面有路拱", "<svg viewBox=\"0 0 100 100\" role=\"img\"><path d=\"M50 7 L95 89 H5 Z\" fill=\"#fff\" stroke=\"#c8102e\" stroke-width=\"8\" stroke-linejoin=\"round\"/><g transform=\"translate(25 38) scale(0.5)\"><path d=\"M6 80 H24 Q50 40 76 80 H94 V86 H6 Z\" fill=\"#111\"/></g></svg>"], ["前面雙程行車", "<svg viewBox=\"0 0 100 100\" role=\"img\"><path d=\"M50 7 L95 89 H5 Z\" fill=\"#fff\" stroke=\"#c8102e\" stroke-width=\"8\" stroke-linejoin=\"round\"/><g transform=\"translate(25 38) scale(0.5)\"><path d=\"M30 92 V36 H18 L34 10 L50 36 H38 V92 Z M70 8 V64 H82 L66 90 L50 64 H62 V8 Z\" fill=\"#111\"/></g></svg>"], ["前面有騎單車者", "<svg viewBox=\"0 0 100 100\" role=\"img\"><path d=\"M50 7 L95 89 H5 Z\" fill=\"#fff\" stroke=\"#c8102e\" stroke-width=\"8\" stroke-linejoin=\"round\"/><g transform=\"translate(25 38) scale(0.5)\"><circle cx=\"26\" cy=\"68\" r=\"15\" fill=\"none\" stroke=\"#111\" stroke-width=\"6\"/><circle cx=\"76\" cy=\"68\" r=\"15\" fill=\"none\" stroke=\"#111\" stroke-width=\"6\"/><path d=\"M26 68 L44 40 H68 L76 68 M50 68 L44 40 M66 32 H76\" fill=\"none\" stroke=\"#111\" stroke-width=\"6\" stroke-linejoin=\"round\"/></g></svg>"], ["前面有道路工程", "<svg viewBox=\"0 0 100 100\" role=\"img\"><path d=\"M50 7 L95 89 H5 Z\" fill=\"#fff\" stroke=\"#c8102e\" stroke-width=\"8\" stroke-linejoin=\"round\"/><g transform=\"translate(25 38) scale(0.5)\"><circle cx=\"40\" cy=\"18\" r=\"9\" fill=\"#111\"/><path d=\"M40 30 L34 60 L24 88 M36 56 L50 88 M38 38 L62 50\" stroke=\"#111\" stroke-width=\"8\" stroke-linecap=\"round\" fill=\"none\"/><path d=\"M60 46 L80 84\" stroke=\"#111\" stroke-width=\"5\"/><path d=\"M60 86 Q76 64 94 86 Z\" fill=\"#111\"/></g></svg>"], ["前面有「讓路」標誌", "<svg viewBox=\"0 0 100 100\" role=\"img\"><path d=\"M50 7 L95 89 H5 Z\" fill=\"#fff\" stroke=\"#c8102e\" stroke-width=\"8\" stroke-linejoin=\"round\"/><g transform=\"translate(25 38) scale(0.5)\"><path d=\"M14 18 H86 L50 84 Z\" fill=\"none\" stroke=\"#111\" stroke-width=\"9\"/></g></svg>"], ["前面有架空電纜", "<svg viewBox=\"0 0 100 100\" role=\"img\"><path d=\"M50 7 L95 89 H5 Z\" fill=\"#fff\" stroke=\"#c8102e\" stroke-width=\"8\" stroke-linejoin=\"round\"/><g transform=\"translate(25 38) scale(0.5)\"><path d=\"M6 40 Q50 64 94 40\" stroke=\"#111\" stroke-width=\"6\" fill=\"none\"/><path d=\"M50 52 L40 72 H52 L44 92 L64 66 H52 L60 52 Z\" fill=\"#111\"/></g></svg>"], ["前面可能有石塊下墜", "<svg viewBox=\"0 0 100 100\" role=\"img\"><path d=\"M50 7 L95 89 H5 Z\" fill=\"#fff\" stroke=\"#c8102e\" stroke-width=\"8\" stroke-linejoin=\"round\"/><g transform=\"translate(25 38) scale(0.5)\"><path d=\"M30 8 V92 H22 V8 Z\" fill=\"#111\"/><circle cx=\"56\" cy=\"34\" r=\"8\" fill=\"#111\"/><circle cx=\"68\" cy=\"60\" r=\"10\" fill=\"#111\"/><circle cx=\"52\" cy=\"80\" r=\"8\" fill=\"#111\"/></g></svg>"], ["前面有電車或輕鐵", "<svg viewBox=\"0 0 100 100\" role=\"img\"><path d=\"M50 7 L95 89 H5 Z\" fill=\"#fff\" stroke=\"#c8102e\" stroke-width=\"8\" stroke-linejoin=\"round\"/><g transform=\"translate(25 38) scale(0.5)\"><rect x=\"20\" y=\"34\" width=\"60\" height=\"44\" rx=\"6\" fill=\"#111\"/><rect x=\"28\" y=\"42\" width=\"44\" height=\"14\" fill=\"#fff\"/><path d=\"M50 34 L40 14 H62\" stroke=\"#111\" stroke-width=\"5\" fill=\"none\"/><circle cx=\"34\" cy=\"82\" r=\"6\" fill=\"#111\"/><circle cx=\"66\" cy=\"82\" r=\"6\" fill=\"#111\"/></g></svg>"], ["前面有霧", "<svg viewBox=\"0 0 100 100\" role=\"img\"><path d=\"M50 7 L95 89 H5 Z\" fill=\"#fff\" stroke=\"#c8102e\" stroke-width=\"8\" stroke-linejoin=\"round\"/><g transform=\"translate(25 38) scale(0.5)\"><path d=\"M10 30 H90 M10 50 H90 M10 70 H90\" stroke=\"#111\" stroke-width=\"8\" stroke-dasharray=\"14 8\"/></g></svg>"], ["前面路滑", "<svg viewBox=\"0 0 100 100\" role=\"img\"><path d=\"M50 7 L95 89 H5 Z\" fill=\"#fff\" stroke=\"#c8102e\" stroke-width=\"8\" stroke-linejoin=\"round\"/><g transform=\"translate(25 38) scale(0.5)\"><g transform=\"translate(0 -10)\"><path d=\"M18 60 L26 42 H74 L82 60 V72 H18 Z\" fill=\"#111\"/><rect x=\"30\" y=\"46\" width=\"40\" height=\"10\" fill=\"#fff\"/><circle cx=\"32\" cy=\"74\" r=\"7\" fill=\"#111\"/><circle cx=\"68\" cy=\"74\" r=\"7\" fill=\"#111\"/></g><path d=\"M18 88 Q30 72 42 88 T66 88 M40 88 Q52 72 64 88 T88 88\" stroke=\"#111\" stroke-width=\"4\" fill=\"none\"/></g></svg>"], ["單程路", "<svg viewBox=\"0 0 100 100\" role=\"img\"><rect x=\"4\" y=\"16\" width=\"92\" height=\"68\" rx=\"6\" fill=\"#1f5fa8\"/><path d=\"M14 42 H64 V30 L88 50 L64 70 V58 H14 Z\" fill=\"#fff\"/></svg>"], ["一般道路方向標誌（藍底）", "<svg viewBox=\"0 0 100 100\" role=\"img\"><rect x=\"4\" y=\"16\" width=\"92\" height=\"68\" rx=\"6\" fill=\"#1f5fa8\"/><text x=\"50\" y=\"58\" text-anchor=\"middle\" font-size=\"18\" font-weight=\"700\" fill=\"#fff\">九龍 →</text></svg>"], ["快速公路方向標誌（綠底）", "<svg viewBox=\"0 0 100 100\" role=\"img\"><rect x=\"4\" y=\"16\" width=\"92\" height=\"68\" rx=\"6\" fill=\"#1f7a3f\"/><text x=\"50\" y=\"58\" text-anchor=\"middle\" font-size=\"18\" font-weight=\"700\" fill=\"#fff\">機場 ↑</text></svg>"], ["區內目的地標誌（白底）", "<svg viewBox=\"0 0 100 100\" role=\"img\"><rect x=\"4\" y=\"16\" width=\"92\" height=\"68\" rx=\"6\" fill=\"#fff\" stroke=\"#888\" stroke-width=\"3\"/><text x=\"50\" y=\"58\" text-anchor=\"middle\" font-size=\"18\" font-weight=\"700\" fill=\"#111\">醫院 ←</text></svg>"], ["臨時改道標誌（黃底）", "<svg viewBox=\"0 0 100 100\" role=\"img\"><rect x=\"4\" y=\"16\" width=\"92\" height=\"68\" rx=\"6\" fill=\"#f4c20d\"/><text x=\"50\" y=\"58\" text-anchor=\"middle\" font-size=\"18\" font-weight=\"700\" fill=\"#111\">改道 →</text></svg>"], ["的士站", "<svg viewBox=\"0 0 100 100\" role=\"img\"><rect x=\"4\" y=\"16\" width=\"92\" height=\"68\" rx=\"6\" fill=\"#fff\" stroke=\"#888\" stroke-width=\"3\"/><text x=\"50\" y=\"58\" text-anchor=\"middle\" font-size=\"20\" font-weight=\"800\" fill=\"#111\">的士</text></svg>"]];
+// ---------- 工具 ----------
+const shuf=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
+const pick=(a,n)=>shuf(a).slice(0,n);
+const store={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+const EXAM=new Date("2026-10-21T00:00:00+08:00");
+
+function mk(part,cat,text,correct,distract,exp,sub){
+  const opts=shuf([correct,...distract]);
+  return {id:part+cat+text+(sub||""),part,cat,text,sub,opts,ans:opts.indexOf(correct),exp};
+}
+function knowQ(q){return mk("甲","載客服務知識",q[0],q[1][0],q[1].slice(1),q[2])}
+function signQ(x){const others=pick(SIGNS.filter(y=>y[0]!==x[0]).map(y=>y[0]),2);const q=mk("乙","交通標誌","這個交通標誌表示甚麼？",x[0],others,"答案："+x[0]+"。");q.svg=x[1];return q}
+function codeQ(q){return mk("乙","道路使用者守則",q[0],q[1][0],q[1].slice(1),q[2])}
+const HOSP=PLACES.slice(0,PLACES.findIndex(x=>x[0]==="香港中文大學醫院")+1);
+function placeQ(p,pool){
+  const others=[...new Set((pool||PLACES).map(x=>x[1]).filter(l=>l!==p[1]))];
+  return mk("甲","地方試題",p[0],p[1],pick(others,3),"答案：「"+p[0]+"」位於"+p[1]+"。","以下地方位於哪一個區域或街道？");
+}
+function routeQ(r){
+  if(r.length===4)return mk("甲","路線試題","由「"+r[0]+"」往「"+r[1]+"」",r[2],r[3],"運輸署示範題。最直接可行路線："+r[2]+"。","在正常交通情況下（不考慮隧道費），最直接可行的路線是：");
+  const others=[...new Set(ROUTES.map(x=>x[2]).filter(t=>t!==r[2]))];
+  return mk("甲","路線試題","由「"+r[0]+"」往「"+r[1]+"」",r[2],pick(others,2),"最直接可行路線："+r[2]+"。","在正常交通情況下（不考慮隧道費），最直接可行的路線是：");
+}
+
+function build(mode){
+  if(mode==="full"||mode==="fullp")return [...pick(KNOW,20).map(knowQ),...pick(PLACES,9).map(p=>placeQ(p)),...pick([...ROUTES,...ROUTES_OFFICIAL],1).map(routeQ),...pick(CODE,35).map(codeQ)];
+  if(mode==="a")return [...pick(KNOW,20).map(knowQ),...pick(PLACES,9).map(p=>placeQ(p)),...pick([...ROUTES,...ROUTES_OFFICIAL],1).map(routeQ)];
+  if(mode==="b")return pick(CODE,35).map(codeQ);
+  if(mode==="code")return shuf(CODE).map(codeQ);
+  if(mode==="sign")return shuf(SIGNS).map(signQ);
+  if(mode==="know")return shuf(KNOW).map(knowQ);
+  if(mode==="place")return pick(PLACES,30).map(p=>placeQ(p));
+  if(mode==="hosp")return shuf(HOSP).map(p=>placeQ(p,HOSP));
+  if(mode==="route")return shuf([...ROUTES,...ROUTES_OFFICIAL]).map(routeQ);
+  if(mode==="wrong"){const w=store.get("rh-wrong",[]);return shuf(w).slice(0,40).map(x=>{const o=x.opts.slice();const c=o[x.ans];const r=mk(x.part,x.cat,x.text,c,o.filter(v=>v!==c),x.exp,x.sub);r.svg=x.svg;return r})}
+  return [];
+}
+
+// ---------- 狀態 ----------
+let S=null,tick=null;
+const app=document.getElementById("app");
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
+
+function home(){
+  clearInterval(tick);S=null;
+  const days=Math.ceil((EXAM-new Date())/864e5);
+  const wrong=store.get("rh-wrong",[]).length;
+  const best=store.get("rh-best",null);
+  app.innerHTML=`
+  <header>
+    <span class="eyebrow">的士及網約車綜合筆試</span>
+    <h1>網約車筆試練習<span class="tag">10月21日</span></h1>
+    <span class="countdown">${days>0?"距離考試尚有 "+days+" 日":days===0?"今日考試，加油！":"考試已過"}${best?" · 最佳模擬成績 "+best+"/65":""}</span>
+  </header>
+  <section class="card">
+    <div class="rules">
+      <div class="rule"><span>甲部 · 的士及網約車營運</span><span class="num">30 題</span><b>錯不多於 5 題</b><span>知識20 · 地方9 · 路線1</span></div>
+      <div class="rule"><span>乙部 · 道路使用者守則</span><span class="num">35 題</span><b>錯不多於 5 題</b><span>三選一 · 題庫 ${CODE.length} 題</span></div>
+    </div>
+    <p class="foot" style="margin:12px 0 0">全卷 65 題，限時 45 分鐘，兩部分都要合格先算及格。</p>
+  </section>
+  <div class="modes">
+    <button class="mode primary" id="m-full"><b>完整模擬試</b><span>65 題 · 45 分鐘計時 · 交卷先睇答案</span></button>
+    <button class="mode" id="m-fullp"><b>65 題溫習版</b><span>全卷範圍 · 唔計時 · 每題即時睇答案</span></button>
+    <button class="mode" id="m-a"><b>甲部模擬</b><span>30 題 · 即時對答案</span></button>
+    <button class="mode" id="m-b"><b>乙部模擬</b><span>35 題 · 即時對答案</span></button>
+    <button class="mode" id="m-code"><b>道路使用者守則</b><span>${CODE.length} 題全溫</span></button>
+    <button class="mode" id="m-sign"><b>交通標誌題</b><span>${SIGNS.length} 個標誌睇圖揀答案</span></button>
+    <button class="mode" id="m-know"><b>載客服務知識</b><span>${KNOW.length} 題全溫</span></button>
+    <button class="mode" id="m-place"><b>地方試題</b><span>每次抽 30 個（共 ${PLACES.length} 個地方）</span></button>
+    <button class="mode" id="m-hosp"><b>醫院地方題</b><span>${HOSP.length} 間醫院全溫</span></button>
+    <button class="mode" id="m-route"><b>路線試題</b><span>${ROUTES.length+ROUTES_OFFICIAL.length} 條路線全溫</span></button>
+    <button class="mode" id="m-wrong" ${wrong?"":"disabled"}><b>錯題重溫</b><span>${wrong?"已儲 "+wrong+" 題":"答錯的題目會儲喺呢度"}</span></button>
+  </div>
+  <p class="foot">甲部題目按運輸署《的士及網約車營運小冊子》（2026年8月3日起生效）編寫；乙部按運輸署《道路使用者守則》（二零二零年六月版）第一至十章出題。★ 為運輸署筆試指引公布的示範題。</p>`;
+  ["full","fullp","a","b","code","sign","know","place","hosp","route","wrong"].forEach(m=>{const b=document.getElementById("m-"+m);if(b&&!b.disabled)b.onclick=()=>start(m)});
+}
+
+function start(mode){
+  const qs=build(mode);if(!qs.length)return home();
+  S={mode,qs,i:0,pick:qs.map(()=>null),exam:mode==="full",end:mode==="full"?Date.now()+45*60e3:0,done:false};
+  if(S.exam){tick=setInterval(()=>{const t=document.getElementById("timer");if(!t)return;const left=S.end-Date.now();if(left<=0){finish();return}t.textContent=fmt(left);t.classList.toggle("low",left<5*60e3)},1000)}
+  render();window.scrollTo(0,0);
+}
+const fmt=ms=>{const s=Math.max(0,Math.floor(ms/1000));return String(s/60|0).padStart(2,"0")+":"+String(s%60).padStart(2,"0")};
+
+function render(){
+  const q=S.qs[S.i],n=S.qs.length,chosen=S.pick[S.i];
+  const reveal=S.done||(!S.exam&&chosen!==null);
+  const answered=S.pick.filter(v=>v!==null).length;
+  const keys="ABCD";
+  app.innerHTML=`
+  <div class="bar"><button class="btn ghost" id="quit">返回</button><span class="grow">第 ${S.i+1} / ${n} 題 · 已答 ${answered}</span>${S.exam&&!S.done?`<span class="timer" id="timer">${fmt(S.end-Date.now())}</span>`:""}</div>
+  <div class="progress"><i style="width:${(S.i+1)/n*100}%"></i></div>
+  <section class="card">
+    <div class="qmeta"><span class="chip ${q.part==="乙"?"b":""}">${q.part}部</span><span>${q.cat}</span></div>
+    <div class="qtext">${q.sub?`<small>${esc(q.sub)}</small>`:""}${esc(q.text)}</div>${q.svg?`<div class="qsign">${q.svg}</div>`:""}
+    <div class="opts">${q.opts.map((o,k)=>{
+      let c="opt";if(reveal){c+=" locked";if(k===q.ans)c+=" right";else if(k===chosen)c+=" wrong"}else if(k===chosen)c+=" sel";
+      return `<button class="${c}" data-k="${k}" id="opt-${k}"><span class="k">${keys[k]}</span><span class="t">${esc(o)}</span></button>`}).join("")}</div>
+    ${reveal?`<div class="explain ${chosen===q.ans?"":"bad"}"><b>${chosen===q.ans?"答啱":chosen===null?"未作答":"答錯"}</b>　${esc(q.exp)}</div>`:""}
+    <div class="nav">
+      <button class="btn ghost" id="prev" ${S.i===0?"disabled":""}>上一題</button>
+      ${S.i<n-1?`<button class="btn solid" id="next">下一題</button>`:S.done?`<button class="btn solid" id="back">睇成績</button>`:`<button class="btn solid" id="submit">交卷</button>`}
+    </div>
+    <div class="grid">${S.qs.map((x,k)=>{let c="cell";if(k===S.i)c+=" cur";const p=S.pick[k];if(S.done||(!S.exam&&p!==null)){if(p!==null)c+=p===x.ans?" r":" w"}else if(p!==null)c+=" done";return `<button class="${c}" data-j="${k}">${k+1}</button>`}).join("")}</div>
+  </section>`;
+  app.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{if(reveal)return;S.pick[S.i]=+b.dataset.k;if(!S.exam&&S.pick[S.i]!==q.ans)saveWrong(q);if(!S.exam&&S.pick[S.i]===q.ans)dropWrong(q);render()});
+  app.querySelectorAll(".cell").forEach(b=>b.onclick=()=>{S.i=+b.dataset.j;render()});
+  const on=(id,f)=>{const e=document.getElementById(id);if(e)e.onclick=f};
+  on("prev",()=>{S.i--;render()});on("next",()=>{S.i++;render()});
+  on("submit",()=>{const left=S.pick.filter(v=>v===null).length;if(left&&!document.getElementById("submit").dataset.sure){const b=document.getElementById("submit");b.dataset.sure=1;b.textContent="仲有 "+left+" 題未答，再撳一次交卷";return}finish()});
+  on("back",result);on("quit",home);
+}
+
+function saveWrong(q){const w=store.get("rh-wrong",[]);if(!w.some(x=>x.id===q.id)){w.push({id:q.id,part:q.part,cat:q.cat,text:q.text,sub:q.sub,opts:q.opts,ans:q.ans,exp:q.exp,svg:q.svg});store.set("rh-wrong",w.slice(-200))}}
+function dropWrong(q){const w=store.get("rh-wrong",[]);store.set("rh-wrong",w.filter(x=>x.id!==q.id))}
+
+function finish(){
+  clearInterval(tick);S.done=true;
+  S.qs.forEach((q,k)=>{if(S.pick[k]!==q.ans)saveWrong(q);else dropWrong(q)});
+  result();
+}
+function result(){
+  const tally=p=>{const idx=S.qs.map((q,k)=>k).filter(k=>S.qs[k].part===p);return {n:idx.length,w:idx.filter(k=>S.pick[k]!==S.qs[k].ans).length}};
+  const A=tally("甲"),B=tally("乙");
+  const parts=[["甲部 · 營運",A],["乙部 · 道路守則",B]].filter(x=>x[1].n);
+  const official=S.mode==="full"||S.mode==="fullp"||S.mode==="a"||S.mode==="b";
+  const pass=parts.every(([_,t])=>t.w<=5);
+  const correct=S.qs.length-A.w-B.w;
+  if(S.mode==="full"){const b=store.get("rh-best",0);if(correct>b)store.set("rh-best",correct)}
+  const cats={};S.qs.forEach((q,k)=>{cats[q.cat]=cats[q.cat]||{n:0,w:0};cats[q.cat].n++;if(S.pick[k]!==q.ans)cats[q.cat].w++});
+  app.innerHTML=`
+  <section class="card result">
+    <span class="eyebrow">成績</span>
+    ${official?`<div class="verdict ${pass?"pass":"fail"}">${pass?"及格":"未及格"}</div>`:`<div class="verdict">${correct} / ${S.qs.length}</div>`}
+    <div class="parts">${parts.map(([name,t])=>`<div class="part"><span class="foot">${name}</span><span class="num">${t.n-t.w}/${t.n}</span>${official?`<span class="st ${t.w<=5?"ok":"no"}">錯 ${t.w} 題 · ${t.w<=5?"合格":"不合格"}</span>`:`<span class="foot">錯 ${t.w} 題</span>`}</div>`).join("")}</div>
+    <div class="foot">${Object.entries(cats).map(([c,t])=>c+"：錯 "+t.w+"/"+t.n).join("　·　")}</div>
+    <div class="nav">
+      <button class="btn ghost" id="home">返回主頁</button>
+      <button class="btn" id="review">逐題睇答案</button>
+      <button class="btn solid" id="again">再做一份新卷</button>
+    </div>
+  </section>`;
+  document.getElementById("home").onclick=home;
+  document.getElementById("review").onclick=()=>{S.i=0;render()};
+  document.getElementById("again").onclick=()=>start(S.mode==="wrong"?"wrong":S.mode);
+}
+
+home();
+</script>
+<script>
+(function(){const tn=document.getElementById("tab-notes"),tq=document.getElementById("tab-quiz"),vn=document.getElementById("notesView"),vq=document.getElementById("quizView");
+function show(q){vn.hidden=q;vq.hidden=!q;tn.setAttribute("aria-selected",!q);tq.setAttribute("aria-selected",q);window.scrollTo(0,0);try{localStorage.setItem("rh-tab",q?"q":"n")}catch(e){}}
+tn.onclick=()=>show(false);tq.onclick=()=>show(true);
+let t=null;try{t=localStorage.getItem("rh-tab")}catch(e){}if(t==="q")show(true);})();
+</script>
+<script>if("serviceWorker" in navigator){addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}))}</script>
+</body>
+</html>
