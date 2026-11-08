@@ -10,9 +10,12 @@ import os
 from articles import ARTICLES
 
 BASE = "https://justvibingmedia.com/"
-LASTMOD = "2026-10-12"
+LASTMOD = "2026-11-08"
 WA = "https://wa.me/85259932444?text=%E4%BD%A0%E5%A5%BD%EF%BC%8C%E6%88%91%E6%83%B3%E4%BA%86%E8%A7%A3%20JVM%20%E6%9C%8D%E5%8B%99"
 EMAIL = "justvibingmedia8@gmail.com"
+IG = "https://www.instagram.com/justvibing_media/"
+THREADS = "https://www.threads.net/@justvibing_media"
+SAME_AS = [IG, THREADS]
 
 NAV = [
     ("ip/", "個人 IP"),
@@ -28,6 +31,8 @@ INDUSTRIES = [
     ("industries/physio/", "痛症治療店"),
     ("industries/cafe/", "咖啡小食店"),
     ("industries/salon/", "髮型屋"),
+    ("industries/beauty/", "美容・美甲店"),
+    ("industries/restaurant/", "餐廳・酒吧"),
 ]
 
 PAGES = [
@@ -250,10 +255,16 @@ PAGES = [
                 ("治療師出鏡", "治療師講自己點睇個案，客人未嚟已經認得你。"),
                 ("Google 評價", "痊癒客人嘅真實評價，係新客最大嘅定心丸。"),
             ]),
+            ("第一個月我哋點做", [
+                ("第 1 星期：定位同 Google 商家檔案", "揀主力痛症（例如上班族膊頭痛、運動受傷），執好商家分類、服務、相片同評價連結。"),
+                ("第 2 星期：拍攝日", "治療師半日拍晒 8 至 12 條衛教片：自我檢查、伸展示範、常見誤解。"),
+                ("第 3 至 4 星期：出片同睇數", "每星期出 2 至 3 條，睇邊類片最多人儲同 WhatsApp 查詢，下個月加多呢類。"),
+            ]),
         ],
         "faq": [
             ("痛症治療中心點宣傳最有效？", "治療師出鏡講衛教內容建立信任，加上 Google 商家檔案同真實評價，等附近有需要嘅人搜得到。"),
             ("醫療相關內容有咩要小心？", "唔可以誇大療效或者保證效果。我哋寫內容會以衛教同經驗分享為主。"),
+            ("痛症治療中心要唔要做 Google 廣告？", "唔一定。先做好 Google 商家檔案同評價，附近搜「痛症治療」「物理治療」嘅人已經會見到你。想加快先試細額廣告。"),
         ],
         "related": ["ip/", "google-maps/"],
     },
@@ -270,10 +281,16 @@ PAGES = [
                 ("店主故事", "點解開呢間舖、揀豆嘅堅持，客人記得人多過記得餐牌。"),
                 ("Google 地圖相片", "門面、餐牌、環境相，搜「附近 cafe」時第一印象。"),
             ]),
+            ("第一個月我哋點做", [
+                ("第 1 星期：揀招牌出品", "揀一至兩樣最代表你嘅出品做主角，執好 Google 商家檔案餐牌、相片同營業時間。"),
+                ("第 2 星期：拍攝日", "繁忙時段之前拍出品特寫、店主故事同熟客反應，一次拍晒成個月。"),
+                ("第 3 至 4 星期：出片同請評價", "每星期出 2 至 3 條 Reels，櫃枱放 Google 評價 QR code，請滿意嘅客留評價。"),
+            ]),
         ],
         "faq": [
             ("Cafe IG 應該拍乜？", "出品過程、店主故事、熟客反應，同埋第一次嚟必叫嘅推介。"),
             ("小食店點樣令人專登去？", "要有一個令人記得嘅理由，例如招牌出品或者店主個性，再喺 IG 同 Google 地圖不斷講。"),
+            ("Cafe 要唔要搵 KOL？", "可以配合，但唔好淨係靠 KOL。KOL 帶一次人流，店主自己嘅 IG 同 Google 評價先留得住客。"),
         ],
         "related": ["video/", "google-maps/"],
     },
@@ -290,12 +307,70 @@ PAGES = [
                 ("髮型師個人品牌", "每個髮型師有自己風格同專長，客人搵人唔搵舖。"),
                 ("Google 評價", "邀請滿意客人留評價，提及髮型師名，新客更易揀。"),
             ]),
+            ("第一個月我哋點做", [
+                ("第 1 星期：每位髮型師定風格", "例如韓式短髮、漂染、男士 fade，每人一個專長，寫入 IG 同 Google 商家檔案服務。"),
+                ("第 2 星期：拍攝日", "揀幾位客人拍前後對比同過程，髮型師講一句點解咁剪。"),
+                ("第 3 至 4 星期：出片同請評價", "每星期出 2 至 3 條前後對比 Reels，請客人留評價時提髮型師名。"),
+            ]),
         ],
         "faq": [
             ("髮型屋 IG 應該拍乜？", "前後對比、髮型師風格、護髮小知識，同埋客人改造故事。"),
             ("髮型師點樣建立個人品牌？", "固定風格同專長、經常出鏡、用同一套語氣同客人溝通，等客人記得你個人。"),
+            ("髮型屋 IG 要用舖頭帳號定髮型師個人帳號？", "兩樣都要。舖頭帳號放全店作品同優惠，髮型師個人帳號建立熟客關係，兩個帳號互相 tag。"),
         ],
         "related": ["ip/", "social-media/"],
+    },
+    {
+        "slug": "industries/beauty/",
+        "title": "美容院宣傳・美甲店 IG 推廣・脫毛店網上營銷｜香港｜JVM",
+        "desc": "JVM 幫香港美容院、美甲店、脫毛同皮膚護理店做網上宣傳：美容師個人品牌、作品同療程過程 Reels、IG 經營、Google 商家檔案同評價管理。",
+        "eyebrow": "行業：美容・美甲",
+        "h1": "美容院同美甲店點樣做 IG 宣傳",
+        "lede": "美容同美甲客人揀店，睇三樣嘢：作品靚唔靚、衛生同環境、信唔信得過嗰位美容師。JVM 幫你用真實作品同美容師個人品牌建立信任，再用 Google 地圖同 IG 等附近嘅客搵到你。",
+        "blocks": [
+            ("適合美容美甲店嘅內容", [
+                ("作品同過程 Reels", "美甲由底油到完成、療程步驟，用近鏡拍出手勢同細節。"),
+                ("美容師個人品牌", "每位美容師講自己專長同心得，熟客會指定搵返同一個人。"),
+                ("環境同衛生", "消毒流程、獨立房、用品，係新客最擔心、最想睇嘅內容。"),
+            ]),
+            ("第一個月我哋點做", [
+                ("第 1 星期：定主打同 Google 商家檔案", "揀一至兩樣主打服務（例如凝膠甲、脫毛療程），執好服務清單、價錢範圍、相片同評價連結。"),
+                ("第 2 星期：拍攝日", "半日拍晒作品特寫、美容師出鏡同環境，客人同意先拍佢哋嘅手或者樣。"),
+                ("第 3 至 4 星期：出片同請評價", "每星期出 2 至 3 條 Reels，做完服務當面請滿意客人留 Google 評價。"),
+            ]),
+        ],
+        "faq": [
+            ("美甲店 IG 應該拍乜？", "完成作品近鏡、由底油到完成嘅過程、季節款式推介，同埋美甲師講點揀顏色同甲型。"),
+            ("美容院宣傳有咩要小心？", "唔可以誇大療效、保證效果，或者用未經客人同意嘅前後對比相。我哋會以真實作品、過程同護理知識為主。"),
+            ("美容院應該做 IG 定 Google 地圖先？", "兩樣都要，但 Google 商家檔案最快見效：附近搜「美甲」「美容院」嘅人已經有需要。IG 就負責令人記得你同相信你。"),
+        ],
+        "related": ["video/", "google-maps/"],
+    },
+    {
+        "slug": "industries/restaurant/",
+        "title": "餐廳宣傳・酒吧推廣・食肆 IG 同 Google 地圖營銷｜香港｜JVM",
+        "desc": "JVM 幫香港餐廳、酒吧同食肆做網上宣傳：主廚同老闆個人 IP、出品 Reels、IG 同 Threads 經營、Google 商家檔案相片同評價管理，唔使靠加廣告預算。",
+        "eyebrow": "行業：餐廳・酒吧",
+        "h1": "餐廳同酒吧點樣做網上宣傳",
+        "lede": "香港食肆多到數唔晒，客人通常喺 Google 地圖同 IG 揀定先出門。JVM 幫餐廳同酒吧拍出人想專登去嘅理由：主廚嘅手勢、老闆嘅故事、招牌菜同氣氛，再做好 Google 商家檔案同評價，等附近搵食嘅人揀你。",
+        "blocks": [
+            ("適合餐廳酒吧嘅內容", [
+                ("招牌菜同出品 Reels", "煮、切、上菜嘅特寫，同埋第一啖嘅反應，最易令人停低。"),
+                ("主廚同老闆出鏡", "點解開呢間、揀材料嘅堅持，客人衝住人而嚟，唔會為平十蚊走。"),
+                ("氣氛同場景", "酒吧調酒、聚會枱、夜景位，幫客人想像同朋友嚟嘅畫面。"),
+            ]),
+            ("第一個月我哋點做", [
+                ("第 1 星期：Google 商家檔案", "執好餐牌、相片、營業時間、訂枱或者 WhatsApp 連結，新客搜「附近餐廳」第一眼就見到。"),
+                ("第 2 星期：拍攝日", "開市前拍出品同主廚，晚市拍氣氛，一次拍晒成個月素材。"),
+                ("第 3 至 4 星期：出片同請評價", "每星期出 2 至 3 條 Reels，枱面放評價 QR code，埋單時請滿意嘅客留 Google 評價。"),
+            ]),
+        ],
+        "faq": [
+            ("餐廳一定要落廣告先有客咩？", "唔一定。先做好 Google 商家檔案、評價同 IG 內容呢啲免費曝光，再揀表現最好嘅片落少量廣告，效果通常好過淨係加預算。"),
+            ("餐廳 Google 評價點樣多啲？", "埋單時當面邀請、枱面放 QR code、每個評價都回覆。唔好用優惠換好評或者買評價，Google 會刪。"),
+            ("酒吧可唔可以喺 IG 宣傳？", "可以，但內容要符合平台對酒精嘅規則，例如唔針對未成年人、唔鼓勵過量飲酒。我哋會以氣氛、調酒手勢同活動為主。"),
+        ],
+        "related": ["ip/", "google-maps/"],
     },
 ]
 
@@ -397,18 +472,18 @@ def head(title, desc, url, prefix, ld, og_type="website"):
 def tail(prefix):
     return f"""<section class="cta"><div class="wrap">
 <h2>想知你間舖可以點做？</h2>
-<p>WhatsApp 5993 2444 或 email {EMAIL}，講聲「診斷」，我哋免費幫你睇一次。</p>
+<p>WhatsApp 5993 2444、email {EMAIL} 或者 IG DM <a href="{IG}" target="_blank" rel="noopener">@justvibing_media</a>，講聲「診斷」，我哋免費幫你睇一次。</p>
 <a class="btn" href="{WA}" target="_blank" rel="noopener">WhatsApp 我哋 →</a>
 </div></section>
 </main>
 <footer><div class="wrap"><nav aria-label="全部服務">{footer_links(prefix)}</nav>
-<span>© 2026 Just Vibing Media（JVM）· 香港 · WhatsApp 5993 2444 · {EMAIL}</span></div></footer>
+<span>© 2026 Just Vibing Media（JVM）· 香港 · WhatsApp 5993 2444 · {EMAIL} · <a href="{IG}" target="_blank" rel="noopener">Instagram @justvibing_media</a> · <a href="{THREADS}" target="_blank" rel="noopener">Threads</a></span></div></footer>
 </body>
 </html>
 """
 
 
-ORG = {"@type": "Organization", "name": "Just Vibing Media", "url": BASE, "logo": BASE + "img/logo.png"}
+ORG = {"@type": "Organization", "name": "Just Vibing Media", "url": BASE, "logo": BASE + "img/logo.png", "sameAs": SAME_AS}
 
 
 def faq_ld(faq):
@@ -550,6 +625,7 @@ def render(p):
                     "url": BASE,
                     "telephone": "+852 5993 2444",
                     "email": EMAIL,
+                    "sameAs": SAME_AS,
                 },
             },
             {
@@ -628,12 +704,12 @@ def render(p):
 </div></section>
 <section class="cta"><div class="wrap">
 <h2>想知你間舖可以點做？</h2>
-<p>WhatsApp 5993 2444 或 email {EMAIL}，講聲「診斷」，我哋免費幫你睇一次。</p>
+<p>WhatsApp 5993 2444、email {EMAIL} 或者 IG DM <a href="{IG}" target="_blank" rel="noopener">@justvibing_media</a>，講聲「診斷」，我哋免費幫你睇一次。</p>
 <a class="btn" href="{WA}" target="_blank" rel="noopener">WhatsApp 我哋 →</a>
 </div></section>
 </main>
 <footer><div class="wrap"><nav aria-label="全部服務">{footer_links(prefix)}</nav>
-<span>© 2026 Just Vibing Media（JVM）· 香港 · WhatsApp 5993 2444 · {EMAIL}</span></div></footer>
+<span>© 2026 Just Vibing Media（JVM）· 香港 · WhatsApp 5993 2444 · {EMAIL} · <a href="{IG}" target="_blank" rel="noopener">Instagram @justvibing_media</a> · <a href="{THREADS}" target="_blank" rel="noopener">Threads</a></span></div></footer>
 </body>
 </html>
 """
