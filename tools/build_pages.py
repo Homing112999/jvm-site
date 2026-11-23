@@ -10,7 +10,7 @@ import os
 from articles import ARTICLES
 
 BASE = "https://justvibingmedia.com/"
-LASTMOD = "2026-10-12"
+LASTMOD = "2026-11-23"
 WA = "https://wa.me/85259932444?text=%E4%BD%A0%E5%A5%BD%EF%BC%8C%E6%88%91%E6%83%B3%E4%BA%86%E8%A7%A3%20JVM%20%E6%9C%8D%E5%8B%99"
 EMAIL = "justvibingmedia8@gmail.com"
 
@@ -33,13 +33,13 @@ INDUSTRIES = [
 PAGES = [
     {
         "slug": "ip/",
-        "title": "打造個人IP｜香港小店老闆個人品牌｜Just Vibing Media",
-        "desc": "JVM 幫香港小店老闆打造個人 IP：人設、口號、內容支柱、腳本，真人團隊上門拍片，IG、Facebook、Threads 發佈。老闆唔識拍片都做到個人品牌。",
+        "title": "打造個人IP｜香港本地店老闆個人品牌｜Just Vibing Media",
+        "desc": "JVM 幫香港本地店老闆打造個人 IP：人設、口號、內容支柱、腳本，真人團隊上門拍片，IG、Facebook、Threads 發佈。老闆唔識拍片都做到個人品牌。",
         "eyebrow": "個人 IP 打造",
-        "h1": "幫香港小店老闆打造個人 IP",
+        "h1": "幫香港本地店老闆打造個人 IP",
         "lede": "個人 IP 即係老闆自己嘅個人品牌：一個有性格、有觀點、客人認得出嘅人。貨品同價錢可以俾人抄，你呢個人冇人抄得到。JVM 由 IP 定位到每月拍片發佈，一條龍幫你做。",
         "blocks": [
-            ("點解小店老闆要做個人品牌", [
+            ("點解本地店老闆要做個人品牌", [
                 ("信任快啲建立", "客人喺 IG、Threads 睇過你講嘢，未入舖已經信你。"),
                 ("唔使淨係鬥平", "客人係衝住你而嚟，唔會為平十蚊走去隔籬。"),
                 ("內容唔會斷", "有固定人設同內容支柱，每月都知拍乜講乜。"),
@@ -63,7 +63,7 @@ PAGES = [
     {
         "slug": "social-media/",
         "title": "IG代營運・Facebook專頁管理・Threads營運｜香港社交媒體代理｜JVM",
-        "desc": "香港小店 IG 代營運、IG 代管、Facebook 專頁管理同 Threads 營運。按公式寫 post，你批咗先出，首月入門套餐 HK$3,000 起。",
+        "desc": "香港本地店 IG 代營運、IG 代管、Facebook 專頁管理同 Threads 營運。按公式寫 post，你批咗先出，首月入門套餐 HK$3,000 起。",
         "eyebrow": "社交媒體代營運",
         "h1": "IG 代營運、Facebook 專頁管理、Threads 營運",
         "lede": "唔想請全職小編？JVM 做你嘅社交媒體代理：IG、Facebook、Threads 一齊打理，內容按痛點公式寫，每篇你批咗先出。",
@@ -88,11 +88,11 @@ PAGES = [
     },
     {
         "slug": "content-marketing/",
-        "title": "內容行銷・內容營銷策略｜香港小店 Content Marketing｜JVM",
-        "desc": "JVM 幫香港小店做內容行銷：內容策略、品牌故事、社交媒體內容同短影音行銷，配合真人實拍同 AI 內容製作，用內容帶客而唔係淨係賣廣告。",
+        "title": "內容行銷・內容營銷策略｜香港本地店 Content Marketing｜JVM",
+        "desc": "JVM 幫香港本地店做內容行銷：內容策略、品牌故事、社交媒體內容同短影音行銷，配合真人實拍同 AI 內容製作，用內容帶客而唔係淨係賣廣告。",
         "eyebrow": "內容行銷",
         "h1": "內容行銷：用內容帶客，唔使日日鬥平",
-        "lede": "內容行銷（Content Marketing，又叫內容營銷）即係持續出有用、有趣、有你性格嘅內容，令客人未幫襯已經認識你、信你。JVM 由內容策略到每月出片出圖，幫香港小店一條龍做。",
+        "lede": "內容行銷（Content Marketing，又叫內容營銷）即係持續出有用、有趣、有你性格嘅內容，令客人未幫襯已經認識你、信你。JVM 由內容策略到每月出片出圖，幫香港本地店一條龍做。",
         "blocks": [
             ("內容行銷做乜", [
                 ("內容策略同品牌故事", "定好講俾邊個聽、講咩題目，將老闆同間舖嘅故事寫成內容。"),
@@ -107,7 +107,7 @@ PAGES = [
         ],
         "faq": [
             ("內容行銷同賣廣告有咩分別？", "廣告停咗錢就冇曝光；內容行銷出咗嘅內容會一直幫你帶客，做得耐成本會越嚟越低。兩樣可以一齊用：用廣告推最好嘅內容。"),
-            ("小店做內容行銷要幾多錢？", "JVM 首月入門套餐 HK$3,000 起，包內容策略同首月內容。之後按你要幾多真人實拍或 AI 內容報價，廣告費另計。"),
+            ("本地店做內容行銷要幾多錢？", "JVM 首月入門套餐 HK$3,000 起，包內容策略同首月內容。之後按你要幾多真人實拍或 AI 內容報價，廣告費另計。"),
             ("內容行銷幾耐見效？", "一般持續出 2 至 3 個月開始見到查詢增加。我哋每月睇數據，留低有效嘅題目，唔 work 嘅就換。"),
         ],
         "related": ["video/", "ai-content/"],
@@ -140,7 +140,7 @@ PAGES = [
     },
     {
         "slug": "ai-content/",
-        "title": "AI 內容製作・AI 影片・AI 短劇・AIGC｜香港小店｜JVM",
+        "title": "AI 內容製作・AI 影片・AI 短劇・AIGC｜香港本地店｜JVM",
         "desc": "JVM AI 內容製作：AI 圖文、AI 短片、廣東話 AI 短劇同 AI 廣告素材，唔使拍攝、唔使出鏡，都可以每星期有內容出。",
         "eyebrow": "AI 內容製作",
         "h1": "AI 內容製作：唔使拍攝，每星期都有內容",
@@ -167,7 +167,7 @@ PAGES = [
     {
         "slug": "google-maps/",
         "title": "Google商家檔案設定・Google Map排名優化｜香港本地SEO｜JVM",
-        "desc": "幫香港小店設定同管理 Google 商家檔案（前稱 Google 我的商家），提升 Google Map 排名：資料、相片、更新、評價邀請同回覆。",
+        "desc": "幫香港本地店設定同管理 Google 商家檔案（前稱 Google 我的商家），提升 Google Map 排名：資料、相片、更新、評價邀請同回覆。",
         "eyebrow": "Google 地圖・本地 SEO",
         "h1": "Google 商家檔案管理，令人搜「附近」見到你",
         "lede": "客人喺 Google 地圖搜「附近」「推介」，排前嘅多數資料齊、相多、評價多。JVM 幫你將 Google 商家檔案（前稱 Google 我的商家）一樣樣做好，做好本地 SEO。",
@@ -193,7 +193,7 @@ PAGES = [
     {
         "slug": "ai-seo/",
         "title": "AI SEO・AI 搜尋優化｜令 ChatGPT 同 Google AI 推薦你間舖｜JVM",
-        "desc": "AI SEO（又叫 GEO 生成式引擎優化）：幫香港小店令 ChatGPT、Gemini、Google AI 摘要搵到同推薦你。結構化資料、一致商家資料、問答式內容。",
+        "desc": "AI SEO（又叫 GEO 生成式引擎優化）：幫香港本地店令 ChatGPT、Gemini、Google AI 摘要搵到同推薦你。結構化資料、一致商家資料、問答式內容。",
         "eyebrow": "AI SEO",
         "h1": "AI SEO：人問 ChatGPT 推介，都講到你",
         "lede": "越來越多人問 ChatGPT、Gemini、Google AI 摘要「邊間好」。AI 會揀資料清楚、多處提及、答到問題嘅舖頭。AI SEO（又叫 GEO、生成式引擎優化）就係幫你成為 AI 揀中嗰間。",
@@ -212,14 +212,14 @@ PAGES = [
         "faq": [
             ("AI SEO 係咩？", "AI SEO 係令 ChatGPT、Gemini、Google AI 摘要呢類 AI 工具，喺回答客人問題時提及同推薦你間舖嘅優化工作，亦叫 GEO（生成式引擎優化）。"),
             ("點樣令 ChatGPT 推薦我間舖？", "網上要有清楚、一致、可信嘅資料：網站結構化資料、Google 商家檔案、真實評價，同埋答到客人問題嘅內容。"),
-            ("小店需唔需要做 AI SEO？", "如果你嘅客會上網問「邊間好」，就值得做。基礎工作同 Google 地圖、網站 SEO 重疊，一齊做最慳力。"),
+            ("本地店需唔需要做 AI SEO？", "如果你嘅客會上網問「邊間好」，就值得做。基礎工作同 Google 地圖、網站 SEO 重疊，一齊做最慳力。"),
         ],
         "related": ["google-maps/", "social-media/"],
     },
     {
         "slug": "meta-ads/",
-        "title": "Meta廣告投放・Facebook廣告・IG廣告代理｜香港小店｜JVM",
-        "desc": "JVM 幫香港小店做 Meta 廣告投放（Facebook 廣告、IG 廣告）：揀受眾、出廣告圖片同短片、寫文案、每星期睇數調整。預算由你定，每筆你批先落。",
+        "title": "Meta廣告投放・Facebook廣告・IG廣告代理｜香港本地店｜JVM",
+        "desc": "JVM 幫香港本地店做 Meta 廣告投放（Facebook 廣告、IG 廣告）：揀受眾、出廣告圖片同短片、寫文案、每星期睇數調整。預算由你定，每筆你批先落。",
         "eyebrow": "Meta 廣告",
         "h1": "Facebook 同 IG 廣告投放，推俾啱嘅街坊",
         "lede": "好內容加少少廣告費，可以推俾你間舖附近、啱年齡、啱興趣嘅人。JVM 負責 Meta 廣告設定、廣告素材同每星期數據調整。",
@@ -493,14 +493,14 @@ def render_article(a):
 def render_blog_index():
     prefix = "../"
     url = BASE + "blog/"
-    title = "小店宣傳文章｜IG、Google 地圖、AI SEO、個人 IP 教學｜JVM"
-    desc = "香港小店老闆實用宣傳文章：小店點宣傳、IG 冇人睇點算、Google Map 排名、點樣令 ChatGPT 推薦你間舖。"
+    title = "本地店宣傳文章｜IG、Google 地圖、AI SEO、個人 IP 教學｜JVM"
+    desc = "香港本地店老闆實用宣傳文章：本地店點宣傳、IG 冇人睇點算、Google Map 排名、點樣令 ChatGPT 推薦你間舖。"
     ld = {
         "@context": "https://schema.org",
         "@graph": [
             {
                 "@type": "Blog",
-                "name": "JVM 小店宣傳文章",
+                "name": "JVM 本地店宣傳文章",
                 "url": url,
                 "inLanguage": "zh-HK",
                 "publisher": ORG,
@@ -519,8 +519,8 @@ def render_blog_index():
     return head(title, desc, url, prefix, ld) + f"""<header class="top"><div class="wrap">
 <p class="crumbs"><a href="{prefix}">首頁</a> / 文章</p>
 <p class="eyebrow">文章</p>
-<h1>小店宣傳實戰文章</h1>
-<p class="lede">寫俾香港小店老闆：IG、Google 地圖、AI 搜尋同個人 IP，點樣用最少預算做出效果。</p>
+<h1>本地店宣傳實戰文章</h1>
+<p class="lede">寫俾香港本地店老闆：IG、Google 地圖、AI 搜尋同個人 IP，點樣用最少預算做出效果。</p>
 </div></header>
 <section class="paper"><div class="wrap"><div class="list">{items}</div></div></section>
 """ + tail(prefix)
