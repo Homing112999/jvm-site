@@ -432,8 +432,8 @@ def crumbs_ld(crumbs):
     return {
         "@type": "BreadcrumbList",
         "itemListElement": [
-            {"@type": "ListItem", "position": i + 1, "name": n, **({"item": u} if u else {})}
-            for i, (n, u) in enumerate(crumbs)
+            {"@type": "ListItem", "position": i + 1, "name": n, "item": u}
+            for i, (n, u) in enumerate([c for c in crumbs if c[1]])
         ],
     }
 
@@ -562,8 +562,8 @@ def render(p):
             {
                 "@type": "BreadcrumbList",
                 "itemListElement": [
-                    {"@type": "ListItem", "position": i + 1, "name": n, **({"item": u} if u else {})}
-                    for i, (n, u) in enumerate(crumbs)
+                    {"@type": "ListItem", "position": i + 1, "name": n, "item": u}
+                    for i, (n, u) in enumerate([c for c in crumbs if c[1]])
                 ],
             },
         ],
